@@ -241,10 +241,11 @@
   .series-badge {
     display: inline-flex;
     align-items: center;
-    padding: 2px 10px;
+    padding: 0 10px;
+    height: 28px;
     border-radius: 8px;
     border: none;
-    background: #f4f1ec;
+    background: #ffffff;
     font-size: 11px;
     font-weight: 500;
     color: #1b1918;
@@ -819,7 +820,7 @@
       courseHTML += '<div style="position:relative;z-index:1;padding:24px;padding-top:80px;">';
       courseHTML += '<h2 style="font-size:24px;font-weight:600;color:#fff;line-height:1.2;letter-spacing:-0.02em;margin-bottom:8px;">' + data.title + '</h2>';
       courseHTML += '<div style="display:flex;align-items:center;gap:8px;">';
-      courseHTML += '<span style="display:inline-flex;align-items:center;padding:2px 10px;border-radius:8px;border:none;background:#f4f1ec;font-size:11px;font-weight:500;color:#1b1918;">' + data.projects.length + ' Projects</span>';
+      courseHTML += '<span style="display:inline-flex;align-items:center;padding:0 12px;height:36px;border-radius:8px;border:none;background:#ffffff;font-size:12px;font-weight:500;color:#1b1918;">' + data.projects.length + ' Projects</span>';
 
       // Plus button (add to my projects)
       courseHTML += '<button class="series-add-btn" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;border:none;background:#f4f1ec;color:#1b1918;cursor:pointer;flex-shrink:0;transition:all 0.15s;margin-left:4px;" onmouseenter="this.style.background=\'#e8e4db\'" onmouseleave="this.style.background=\'#f4f1ec\'" onclick="event.stopPropagation();var b=this;b.classList.toggle(\'added\');b.innerHTML=b.classList.contains(\'added\')?\'<svg width=20 height=20 viewBox=\\\'0 0 24 24\\\' fill=none stroke=currentColor stroke-width=2><path d=M5 13l4 4L19 7/></svg>\':\'<svg width=18 height=18 viewBox=\\\'0 0 24 24\\\' fill=none stroke=currentColor stroke-width=2><path d=M12 5v14M5 12h14/></svg>\';b.style.background=b.classList.contains(\'added\')?\'#12CCA6\':\'rgba(255,255,255,0.15)\'" title="Add series to my projects">';

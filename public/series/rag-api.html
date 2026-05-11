@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG API — Nextwork</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font-ui:    "Inter", -apple-system, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --accent:     #C47A3A;
+  --accent-hi:  #F0A050;
+  --bg:         #060708;
+  --fg:         rgba(248, 245, 240, 0.92);
+  --fg-dim:     rgba(248, 245, 240, 0.42);
+  --border:     rgba(196, 122, 58, 0.16);
+  --glass:      rgba(6, 7, 8, 0.52);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  overflow-x: hidden;
+}
+
+/* ── Grid canvas ── */
+#grid {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* ── Page shell ── */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Nav ── */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 40px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(6,7,8,0.50);
+  backdrop-filter: blur(16px);
+}
+.nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--fg-dim);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: color 0.18s;
+}
+.nav-back:hover { color: var(--fg); }
+.nav-back svg { width: 14px; height: 14px; flex-shrink: 0; }
+.nav-brand {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--fg-dim);
+  letter-spacing: 0.03em;
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 72px 40px 52px;
+  max-width: 860px;
+}
+.series-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 22px;
+}
+.series-title {
+  font-family: var(--font-serif);
+  font-size: clamp(52px, 8vw, 96px);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  margin-bottom: 28px;
+}
+.series-desc {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--fg-dim);
+  max-width: 500px;
+}
+
+/* ── Stats bar ── */
+.stats {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+}
+.stat {
+  padding: 20px 32px;
+  border-right: 1px solid var(--border);
+}
+.stat:last-child { border-right: none; }
+.stat-value {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--fg-dim);
+  margin-top: 3px;
+  letter-spacing: 0.03em;
+}
+
+/* ── Projects ── */
+.projects {
+  padding: 48px 40px 64px;
+  flex: 1;
+}
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  margin-bottom: 20px;
+}
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 680px;
+}
+.project-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  text-decoration: none;
+  color: var(--fg);
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+  cursor: pointer;
+}
+.project-card:hover {
+  background: rgba(196, 122, 58, 0.09);
+  border-color: rgba(196, 122, 58, 0.32);
+  transform: translateX(5px);
+}
+.project-name { font-size: 14px; font-weight: 500; }
+.project-arrow {
+  color: var(--fg-dim);
+  font-size: 16px;
+  transition: color 0.18s, transform 0.18s;
+}
+.project-card:hover .project-arrow {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+</style>
+</head>
+<body>
+
+<canvas id="grid"></canvas>
+
+<div class="page">
+
+  <nav>
+    <a class="nav-back" href="/nextwork-directory.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M10 3L6 8l4 5"/>
+      </svg>
+      Projects
+    </a>
+    <span class="nav-brand">Nextwork</span>
+  </nav>
+
+  <div class="hero">
+    <div class="series-tag">Series · 3 projects</div>
+    <h1 class="series-title">RAG API</h1>
+    <p class="series-desc">Build retrieval-augmented generation APIs from scratch — then containerize with Docker and deploy to Kubernetes at scale.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Projects</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">Intermediate</div>
+      <div class="stat-label">Level</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">Python · Docker · K8s</div>
+      <div class="stat-label">Stack</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">~6 hrs</div>
+      <div class="stat-label">Est. time</div>
+    </div>
+  </div>
+
+  <div class="projects">
+    <div class="section-label">Projects</div>
+    <div class="project-list">
+      <a class="project-card" href="#">
+        <span class="project-name">Build a RAG API with FastAPI</span>
+        <span class="project-arrow">→</span>
+      </a>
+      <a class="project-card" href="#">
+        <span class="project-name">Containerize a RAG API with Docker</span>
+        <span class="project-arrow">→</span>
+      </a>
+      <a class="project-card" href="#">
+        <span class="project-name">Deploy a RAG API to Kubernetes</span>
+        <span class="project-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var cvs = document.getElementById('grid');
+  cvs.width  = window.innerWidth;
+  cvs.height = window.innerHeight;
+
+  var gl = cvs.getContext('webgl', { alpha: false }) ||
+           cvs.getContext('experimental-webgl', { alpha: false });
+  if (!gl) return;
+
+  /* ── Vertex shader: fullscreen quad ─────────────────────────────────── */
+  var VS = 'attribute vec2 a_pos;void main(){gl_Position=vec4(a_pos,0.,1.);}';
+
+  /* ── Fragment shader ─────────────────────────────────────────────────── */
+  /* Perspective ground grid viewed from a camera at height camH.
+     The grid scrolls toward the viewer; bright data bands pulse along
+     the Z-direction lines. Depth fog dims distant geometry. Edge banding
+     compresses brightness toward the left/right screen edges, reinforcing
+     the sense of a tunnel/corridor receding into the distance.            */
+  var FS = [
+    'precision mediump float;',
+    'uniform vec2  u_res;',
+    'uniform float u_time;',
+
+    'void main(){',
+    '  vec2 uv = gl_FragCoord.xy / u_res;',
+    '  vec2 p  = (uv - 0.5) * 2.0;',
+    '  p.x    *= u_res.x / u_res.y;',
+
+    // ── Camera & corridor parameters ────────────────────────────────────
+    '  float camH  = 1.7;',   // camera height (0 = floor, H = ceiling)
+    '  float pitch = -0.38;', // downward tilt
+    '  float focal =  1.15;',
+    '  float W     =  2.5;',  // corridor half-width (walls at x = ±W)
+    '  float H     =  3.0;',  // corridor total height (ceiling at y = H)
+    '  vec3 rd = normalize(vec3(p.x, p.y + pitch, focal));',
+
+    // ── Ray–plane intersections — pick nearest hit ──────────────────────
+    '  float bT = 9999.0;',   // best (nearest) t
+    '  vec2  gUV = vec2(0.0);',
+    '  bool  hit = false;',
+
+    // Floor y = 0
+    '  if (rd.y < -0.001) {',
+    '    float t = -camH / rd.y;',
+    '    if (t > 0.01) {',
+    '      float wx = rd.x * t;',
+    '      if (abs(wx) < W && t < bT) { bT = t; gUV = vec2(wx, rd.z * t + u_time * 1.6); hit = true; }',
+    '    }',
+    '  }',
+
+    // Ceiling y = H
+    '  if (rd.y > 0.001) {',
+    '    float t = (H - camH) / rd.y;',
+    '    if (t > 0.01) {',
+    '      float wx = rd.x * t;',
+    '      if (abs(wx) < W && t < bT) { bT = t; gUV = vec2(wx, rd.z * t + u_time * 1.6); hit = true; }',
+    '    }',
+    '  }',
+
+    // Left wall x = -W
+    '  if (rd.x < -0.001) {',
+    '    float t = -W / rd.x;',
+    '    if (t > 0.01) {',
+    '      float wy = camH + rd.y * t;',
+    '      if (wy > 0.0 && wy < H && t < bT) { bT = t; gUV = vec2(rd.z * t + u_time * 1.6, wy); hit = true; }',
+    '    }',
+    '  }',
+
+    // Right wall x = +W
+    '  if (rd.x > 0.001) {',
+    '    float t = W / rd.x;',
+    '    if (t > 0.01) {',
+    '      float wy = camH + rd.y * t;',
+    '      if (wy > 0.0 && wy < H && t < bT) { bT = t; gUV = vec2(rd.z * t + u_time * 1.6, wy); hit = true; }',
+    '    }',
+    '  }',
+
+    '  vec3 col = vec3(0.0);',
+
+    '  if (hit) {',
+
+    // ── Grid lines at hit point ─────────────────────────────────────────
+    '    float gx = abs(fract(gUV.x + 0.5) - 0.5);',
+    '    float gz = abs(fract(gUV.y + 0.5) - 0.5);',
+    '    float pw   = clamp(0.016 * bT, 0.005, 0.08);',
+    '    float lnX  = smoothstep(pw, 0.0, gx);',
+    '    float lnZ  = smoothstep(pw, 0.0, gz);',
+    '    float grid = max(lnX, lnZ);',
+
+    // ── Data bands (amber pulses along the scroll axis) ─────────────────
+    '    float b1   = pow(max(0.0, sin(gUV.y * 2.8 - u_time * 5.5)), 6.0) * 0.80;',
+    '    float b2   = pow(max(0.0, sin(gUV.y * 1.4 - u_time * 3.2 + 1.8)), 8.0) * 0.55;',
+    '    float band = max(b1, b2) * lnZ;',
+
+    '    float fog   = exp(-bT * 0.09);',
+    '    float bloom = exp(-bT * bT * 0.004) * 0.12;',
+
+    // ── Edge banding (screen-space — works on walls too) ────────────────
+    '    float ex = abs(p.x);',
+    '    float edgeMask  = 1.0 - smoothstep(0.50, 1.10, ex);',
+    '    float edgeBands = sin(ex * 18.0 - u_time * 1.2) * 0.5 + 0.5;',
+    '    edgeBands *= smoothstep(0.45, 0.90, ex) * 0.35;',
+    '    edgeMask   = max(edgeMask - edgeBands, 0.0);',
+
+    '    float bright = (grid * 0.50 + band * 1.0 + bloom) * fog * edgeMask;',
+    '    float node   = lnX * lnZ;',
+
+    '    vec3 gc = vec3(0.769, 0.478, 0.227);',
+    '    vec3 bc = vec3(0.941, 0.627, 0.314);',
+    '    col = mix(gc, bc, clamp(band * 2.5, 0.0, 1.0)) * bright;',
+    '    col += vec3(1.0, 0.70, 0.25) * node * fog * 0.55;',
+
+    '  } else {',
+    // ── Beyond corridor (vanishing point area): faint haze ──────────────
+    '    float h = exp(-max(0.0, length(p) * 2.0 - 0.5) * 6.0) * 0.04;',
+    '    col = vec3(0.769, 0.478, 0.227) * h;',
+    '  }',
+
+    // ── Global vignette ────────────────────────────────────────────────
+    '  float vig = 1.0 - smoothstep(0.45, 1.40, length(p) * 0.58);',
+    '  col *= vig * vig;',
+
+    '  gl_FragColor = vec4(col, 1.0);',
+    '}',
+  ].join('\n');
+
+  /* ── Compile & link ──────────────────────────────────────────────────── */
+  function mkShader(src, type) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  var prog = gl.createProgram();
+  gl.attachShader(prog, mkShader(VS, gl.VERTEX_SHADER));
+  gl.attachShader(prog, mkShader(FS, gl.FRAGMENT_SHADER));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  /* ── Fullscreen quad ─────────────────────────────────────────────────── */
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER,
+    new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  var aPos = gl.getAttribLocation(prog, 'a_pos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  /* ── Uniforms ─────────────────────────────────────────────────────────── */
+  var uRes  = gl.getUniformLocation(prog, 'u_res');
+  var uTime = gl.getUniformLocation(prog, 'u_time');
+  gl.uniform2f(uRes, cvs.width, cvs.height);
+
+  /* ── Render loop ─────────────────────────────────────────────────────── */
+  var t0 = performance.now();
+  function frame() {
+    gl.uniform1f(uTime, (performance.now() - t0) / 1000);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  /* ── Resize ──────────────────────────────────────────────────────────── */
+  window.addEventListener('resize', function () {
+    cvs.width  = window.innerWidth;
+    cvs.height = window.innerHeight;
+    gl.viewport(0, 0, cvs.width, cvs.height);
+    gl.uniform2f(uRes, cvs.width, cvs.height);
+  });
+}());
+</script>
+</body>
+</html>

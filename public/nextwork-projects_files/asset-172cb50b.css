@@ -1,0 +1,1 @@
+@keyframes fadeOutPaywall{0%{opacity:1}to{opacity:0;visibility:hidden}}.container-fade-out{animation:fadeOutPaywall var(--paywall-fade-duration, .5s) ease-in-out forwards}@media screen(xl){.page-layout{display:-ms-grid;display:grid;-ms-grid-columns:1fr 816px 1fr;grid-template-columns:1fr 816px 1fr}}

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body style="background: red; margin:0; height: 100vh;">
+  <div style="isolation: isolate; position: fixed; inset: 0;">
+    <div style="position:absolute;inset:0;width:100%;height:100%;opacity:0.99;">
+      <iframe srcdoc="<body style='background: blue;'></body>" style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>
+    </div>
+    <div style="position:absolute;inset:0;width:100%;height:100%;background:white;mix-blend-mode:destination-in;clip-path:circle(50%);"></div>
+  </div>
+</body>
+</html>

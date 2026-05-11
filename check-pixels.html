@@ -1,0 +1,15 @@
+<canvas id="c"></canvas>
+<script>
+  const img = new Image();
+  img.onload = () => {
+    const c = document.getElementById('c');
+    c.width = img.width; c.height = img.height;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const p1 = ctx.getImageData(50, 50, 1, 1).data; // outside punch (should be green)
+    const p2 = ctx.getImageData(150, 150, 1, 1).data; // inside punch (should be blue)
+    console.log("Outside:", p1);
+    console.log("Inside:", p2);
+  };
+  img.src = 'test-punch.png';
+</script>

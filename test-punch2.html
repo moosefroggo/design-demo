@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0; background: green;">
+  <!-- The iframe is behind everything -->
+  <iframe srcdoc="<body style='background: blue;'><h1 style='color:white'>Iframe</h1></body>" style="position:fixed;inset:0;width:100%;height:100%;border:none;z-index:1;"></iframe>
+  
+  <!-- The app wrapper -->
+  <div style="position:fixed;inset:0;z-index:2;isolation:isolate;">
+    <!-- App content (cards, background) -->
+    <div style="width:100%;height:100%;background:red;"></div>
+    
+    <!-- The mask canvas -->
+    <canvas id="c" style="position:absolute;inset:0;width:100%;height:100%;mix-blend-mode:destination-out;pointer-events:none;"></canvas>
+  </div>
+  <script>
+    const c = document.getElementById('c');
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'; // Erases the red div
+    ctx.fillRect(100, 100, 200, 200);
+  </script>
+</body>
+</html>
