@@ -1,0 +1,563 @@
+"use client";
+
+import { holeExit } from "./hole-animation";
+
+export default function Home() {
+  return (
+    <>
+      {/* Navigation */}
+      <Nav />
+
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-container">
+          <div className="hero-content">
+            <h1 className="hero-headline">
+              Build AI Projects.
+              <br />
+              Generate a Portfolio.
+            </h1>
+            <p className="hero-subtitle">
+              Your skills grow with every project you build.
+            </p>
+            <div className="hero-trust">
+              <div className="hero-avatars">
+                <span className="hero-avatar" />
+                <span className="hero-avatar" />
+                <span className="hero-avatar" />
+              </div>
+              <span className="hero-trust-text">Trusted by 190K+ learners</span>
+            </div>
+            <button className="hero-cta" onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); holeExit(r.left + r.width / 2, r.top + r.height / 2, "#1B1918", "https://learn.nextwork.org/"); }}>Start Your First Project<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.333 8h9.334M8 3.333L12.667 8 8 12.667" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+          </div>
+
+          {/* Globe Visual */}
+          <div className="hero-visual">
+            <Globe />
+          </div>
+        </div>
+      </section>
+      {/* Hole animation wrapper */}
+      <div id="hole-wrapper" style={{ position: "fixed", inset: 0, zIndex: -100, pointerEvents: "none", opacity: 0 }}>
+        <iframe id="preload-recreated-page" src="https://learn.nextwork.org/" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", pointerEvents: "none" }} aria-hidden="true" />
+      </div>
+
+
+      <style jsx>{`
+        /* ===== NAVIGATION ===== */
+        .nav {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 100;
+          background: rgba(248, 245, 240, 0.85);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(27, 25, 24, 0.06);
+        }
+
+        .nav-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 32px;
+          height: 64px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .nav-logo {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          text-decoration: none;
+          color: var(--leather, #1b1918);
+          font-weight: 700;
+          font-size: 18px;
+          letter-spacing: -0.02em;
+        }
+
+        .nav-logo svg {
+          width: 32px;
+          height: 32px;
+          flex-shrink: 0;
+        }
+
+        .nav-links {
+          display: flex;
+          align-items: center;
+          gap: 32px;
+          list-style: none;
+        }
+
+        .nav-links a {
+          text-decoration: none;
+          color: var(--leather, #1b1918);
+          font-size: 15px;
+          font-weight: 500;
+          transition: opacity 0.2s;
+        }
+
+        .nav-links a:hover {
+          opacity: 0.6;
+        }
+
+        .nav-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 20px;
+          background: var(--leather, #1b1918);
+          color: var(--paper, #f8f5f0);
+          border-radius: 9999px;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+          transition:
+            background 0.2s,
+            transform 0.15s;
+        }
+
+        .nav-cta:hover {
+          background: #000;
+          transform: scale(1.02);
+        }
+
+        .nav-cta svg {
+          width: 14px;
+          height: 14px;
+          flex-shrink: 0;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          padding-top: 64px;
+        }
+
+        .hero-container {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 80px 32px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 80px;
+          align-items: center;
+          width: 100%;
+        }
+
+        .hero-content {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .hero-headline {
+          font-family: var(--font-ui);
+          font-size: clamp(48px, 6vw, 80px);
+          font-weight: 800;
+          line-height: 1.05;
+          letter-spacing: -0.03em;
+          color: var(--leather, #1b1918);
+          margin: 0;
+        }
+
+        .hero-subtitle {
+          font-family: var(--font-body);
+          font-size: clamp(18px, 2.2vw, 22px);
+          font-weight: 400;
+          line-height: 1.5;
+          color: #5c5856;
+          margin: 0;
+          max-width: 480px;
+        }
+
+        .hero-trust {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .hero-avatars {
+          display: flex;
+          margin-right: 4px;
+        }
+
+        .hero-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 2px solid var(--paper, #f8f5f0);
+          background: var(--sand, #e5dcc7);
+          margin-left: -8px;
+          display: block;
+        }
+
+        .hero-avatar:first-child {
+          margin-left: 0;
+        }
+
+        .hero-trust-text {
+          font-size: 14px;
+          font-weight: 500;
+          color: #5c5856;
+          letter-spacing: -0.01em;
+        }
+
+        .hero-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 16px 32px;
+          background: var(--leather, #1b1918);
+          color: var(--paper, #f8f5f0);
+          border-radius: 9999px;
+          text-decoration: none;
+          font-size: 16px;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+          transition:
+            background 0.2s,
+            transform 0.15s,
+            box-shadow 0.2s;
+          align-self: flex-start;
+          box-shadow: 0 2px 12px rgba(27, 25, 24, 0.12);
+        }
+
+        .hero-cta:hover {
+          background: #000;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 24px rgba(27, 25, 24, 0.18);
+        }
+
+        .hero-cta svg {
+          width: 18px;
+          height: 18px;
+          flex-shrink: 0;
+          transition: transform 0.2s;
+        }
+
+        .hero-cta:hover svg {
+          transform: translateX(3px);
+        }
+
+        /* ===== GLOBE VISUAL ===== */
+        .hero-visual {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .globe-wrap {
+          position: relative;
+          width: 100%;
+          max-width: 480px;
+          aspect-ratio: 1;
+        }
+
+        .globe-svg {
+          width: 100%;
+          height: 100%;
+        }
+
+        .globe-sphere {
+          fill: none;
+          stroke: var(--sand, #e5dcc7);
+          stroke-width: 1.5;
+        }
+
+        .globe-continent {
+          fill: var(--sand, #e5dcc7);
+          opacity: 0.6;
+          transition: opacity 0.3s;
+        }
+
+        .globe-dot {
+          fill: var(--cornflower, #308ded);
+          opacity: 0.9;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+          .hero-container {
+            grid-template-columns: 1fr;
+            gap: 48px;
+            padding: 48px 24px;
+          }
+
+          .hero-headline {
+            font-size: clamp(36px, 8vw, 56px);
+          }
+
+          .hero-visual {
+            order: -1;
+            max-width: 320px;
+            margin: 0 auto;
+          }
+
+          .nav-links {
+            display: none;
+          }
+
+          .nav-inner {
+            padding: 0 20px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-headline {
+            font-size: 36px;
+          }
+
+          .hero-subtitle {
+            font-size: 16px;
+          }
+
+          .hero-cta {
+            padding: 14px 24px;
+            font-size: 15px;
+          }
+
+          .nav-inner {
+            height: 56px;
+          }
+        }
+      `}</style>
+    </>
+  );
+}
+
+/* ===== NAVIGATION COMPONENT ===== */
+function Nav() {
+  return (
+    <nav className="nav">
+      <div className="nav-inner">
+        <a href="/" className="nav-logo">
+          {/* NextWork Logo */}
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 256 256"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g clipPath="url(#nav-clip)">
+              <mask
+                id="nav-mask"
+                style={{ maskType: "luminance" }}
+                maskUnits="userSpaceOnUse"
+                x="0"
+                y="0"
+                width="256"
+                height="256"
+              >
+                <path d="M0 0H256V256H0V0Z" fill="white" />
+              </mask>
+              <g mask="url(#nav-mask)">
+                <path
+                  d="M245.94 78.1744C239.495 62.9318 230.265 49.2442 218.511 37.4893C206.756 25.7346 193.068 16.5054 177.826 10.0596C162.042 3.3847 145.279 0 128 0C110.721 0 93.9584 3.3847 78.1744 10.0596C62.9318 16.5054 49.2442 25.7346 37.4893 37.4893C25.7346 49.2442 16.5054 62.9318 10.0596 78.1744C3.3847 93.9584 0 110.721 0 128C0 145.279 3.3847 162.042 10.0596 177.826C16.5054 193.068 25.7346 206.756 37.4893 218.511C49.2442 230.265 62.9318 239.495 78.1744 245.94C93.9584 252.615 110.721 256 128 256C145.279 256 162.042 252.615 177.826 245.94C193.068 239.495 206.756 230.265 218.511 218.511C230.265 206.756 239.495 193.068 245.94 177.826C252.615 162.042 256 145.279 256 128C256 110.721 252.615 93.9584 245.94 78.1744ZM174.478 17.9716C188.695 23.985 201.467 32.5955 212.434 43.5629C223.402 54.5302 232.012 67.3018 238.026 81.519C243.228 93.8208 246.287 106.767 247.152 120.1L231.176 110.143C195.817 88.1053 162.543 62.4138 132.275 33.7811L107.492 10.3373C114.215 9.17475 121.059 8.59059 127.997 8.59059C144.119 8.59059 159.756 11.7462 174.475 17.9716H174.478ZM81.5219 17.9716C86.6877 15.7867 91.968 13.9826 97.3402 12.5566L126.373 40.0208C156.953 68.9482 190.56 94.912 226.268 117.204C162.804 100.971 102.623 75.0246 47.2627 40.0266C57.3709 30.7343 68.8707 23.3235 81.5219 17.9716ZM17.9716 81.5219C23.5068 68.4355 31.2469 56.5776 40.9942 46.223C95.5533 80.952 154.754 106.988 217.171 123.705H8.6679C9.18048 109.101 12.3018 94.929 17.9744 81.5219H17.9716ZM17.9716 174.478C12.3018 161.071 9.17763 146.899 8.66506 132.295H217.371C154.892 148.998 95.6077 175.036 40.9942 209.78C31.2469 199.422 23.5068 187.567 17.9716 174.478ZM47.2656 215.976C102.649 180.987 162.869 155.043 226.354 138.827L225.277 139.503C190.331 161.415 157.391 186.868 127.373 215.155L97.3459 243.446C91.9709 242.02 86.6906 240.216 81.5219 238.028C68.8736 232.679 57.3738 225.268 47.2685 215.976H47.2656ZM238.028 174.478C232.015 188.695 223.404 201.467 212.437 212.434C201.47 223.402 188.698 232.012 174.481 238.026C159.762 244.251 144.124 247.406 128.003 247.406C121.073 247.406 114.235 246.822 107.517 245.663L133.266 221.4C162.878 193.498 195.373 168.39 229.844 146.776L247.155 135.924C246.287 149.247 243.231 162.182 238.031 174.475L238.028 174.478Z"
+                  fill="#1B1918"
+                />
+              </g>
+            </g>
+            <defs>
+              <clipPath id="nav-clip">
+                <rect width="256" height="256" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+          NextWork
+        </a>
+
+        <ul className="nav-links">
+          <li>
+            <a href="#">Projects</a>
+          </li>
+          <li>
+            <a href="#">Community</a>
+          </li>
+          <li>
+            <a href="#">About</a>
+          </li>
+        </ul>
+
+        <a href="#" className="nav-cta">
+          Start Your First Project
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.333 8h9.334M8 3.333L12.667 8 8 12.667"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </a>
+      </div>
+    </nav>
+  );
+}
+
+/* ===== GLOBE COMPONENT ===== */
+function Globe() {
+  return (
+    <div className="globe-wrap">
+      <svg
+        className="globe-svg"
+        viewBox="0 0 400 400"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Base sphere */}
+        <circle cx="200" cy="200" r="160" className="globe-sphere" />
+
+        {/* Grid lines - horizontal */}
+        <ellipse cx="200" cy="200" rx="160" ry="40" className="globe-sphere" />
+        <ellipse cx="200" cy="200" rx="160" ry="100" className="globe-sphere" />
+        <ellipse cx="200" cy="200" rx="100" ry="160" className="globe-sphere" />
+        <ellipse cx="200" cy="200" rx="40" ry="160" className="globe-sphere" />
+
+        {/* Continents - abstract shapes */}
+        {/* North America */}
+        <path
+          d="M80 80 C90 60, 120 40, 150 50 C170 55, 180 80, 170 110 C165 130, 140 150, 120 145 C100 140, 85 120, 80 100Z"
+          className="globe-continent"
+        />
+        {/* South America */}
+        <path
+          d="M130 160 C140 150, 155 155, 160 170 C165 190, 155 220, 145 230 C135 235, 125 215, 125 195 C125 175, 128 165, 130 160Z"
+          className="globe-continent"
+        />
+        {/* Europe */}
+        <path
+          d="M190 70 C200 60, 220 55, 235 65 C245 75, 240 90, 230 95 C218 100, 200 95, 192 85Z"
+          className="globe-continent"
+        />
+        {/* Africa */}
+        <path
+          d="M195 100 C210 95, 225 100, 230 115 C238 140, 230 180, 220 200 C210 210, 200 195, 198 170 C195 145, 190 115, 195 100Z"
+          className="globe-continent"
+        />
+        {/* Asia */}
+        <path
+          d="M240 55 C260 45, 290 50, 310 65 C325 80, 330 100, 315 115 C300 125, 270 120, 250 110 C235 100, 230 75, 240 55Z"
+          className="globe-continent"
+        />
+        {/* Australia */}
+        <path
+          d="M290 200 C305 195, 320 205, 318 220 C315 230, 300 235, 290 228 C280 220, 278 208, 290 200Z"
+          className="globe-continent"
+        />
+        {/* Antarctica hint */}
+        <path
+          d="M100 310 C150 315, 250 315, 300 310"
+          stroke="var(--sand, #e5dcc7)"
+          strokeWidth="1.5"
+          fill="none"
+          opacity="0.4"
+        />
+
+        {/* Active dots (learners around the world) */}
+        <circle cx="145" cy="115" r="4" className="globe-dot">
+          <animate
+            attributeName="opacity"
+            values="1;0.3;1"
+            dur="3s"
+            repeatCount="indefinite"
+          />
+        </circle>
+        <circle cx="210" cy="85" r="3" className="globe-dot">
+          <animate
+            attributeName="opacity"
+            values="1;0.3;1"
+            dur="2.5s"
+            repeatCount="indefinite"
+            begin="0.5s"
+          />
+        </circle>
+        <circle cx="270" cy="75" r="4" className="globe-dot">
+          <animate
+            attributeName="opacity"
+            values="1;0.3;1"
+            dur="4s"
+            repeatCount="indefinite"
+            begin="1s"
+          />
+        </circle>
+        <circle cx="295" cy="210" r="3" className="globe-dot">
+          <animate
+            attributeName="opacity"
+            values="1;0.3;1"
+            dur="3.2s"
+            repeatCount="indefinite"
+            begin="0.3s"
+          />
+        </circle>
+        <circle cx="220" cy="185" r="4" className="globe-dot">
+          <animate
+            attributeName="opacity"
+            values="1;0.3;1"
+            dur="2.8s"
+            repeatCount="indefinite"
+            begin="1.5s"
+          />
+        </circle>
+        <circle cx="120" cy="175" r="3" className="globe-dot">
+          <animate
+            attributeName="opacity"
+            values="1;0.3;1"
+            dur="3.5s"
+            repeatCount="indefinite"
+            begin="0.7s"
+          />
+        </circle>
+        <circle cx="165" cy="80" r="3" className="globe-dot">
+          <animate
+            attributeName="opacity"
+            values="1;0.3;1"
+            dur="2.2s"
+            repeatCount="indefinite"
+            begin="1.2s"
+          />
+        </circle>
+        <circle cx="300" cy="130" r="4" className="globe-dot">
+          <animate
+            attributeName="opacity"
+            values="1;0.3;1"
+            dur="3.8s"
+            repeatCount="indefinite"
+            begin="0.9s"
+          />
+        </circle>
+        <circle cx="250" cy="240" r="3" className="globe-dot" opacity="0.6">
+          <animate
+            attributeName="opacity"
+            values="0.6;0.2;0.6"
+            dur="3.1s"
+            repeatCount="indefinite"
+            begin="1.8s"
+          />
+        </circle>
+        <circle cx="100" cy="250" r="3" className="globe-dot" opacity="0.5">
+          <animate
+            attributeName="opacity"
+            values="0.5;0.15;0.5"
+            dur="4.2s"
+            repeatCount="indefinite"
+            begin="0.4s"
+          />
+        </circle>
+      </svg>
+    </div>
+  );
+}

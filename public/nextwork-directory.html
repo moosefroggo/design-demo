@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Nextwork</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --font-ui:   "Inter", -apple-system, sans-serif;
+    --font-serif: "Source Serif 4", Georgia, serif;
+    --paper:       #F8F5F0;
+    --white:       #ffffff;
+    --leather:     #1B1918;
+    --primary:        #1B1918;
+    --secondary:      #5a5450;
+    --tertiary:       #7a7370;
+    --quaternary:     #a09894;
+    --primary-hover:    #f0ece6;
+    --secondary-alt:    #f4f1ec;
+    --border-primary:   #E5DCC7;
+    --border-secondary: #d5ccba;
+    --brand-200: #ddd0b8;
+    --radius-xl: 16px;
+    --shadow-md: 0 4px 6px rgba(27,25,24,.06);
+    --shadow-lg: 0 12px 16px -4px rgba(27,25,24,.08);
+  }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--paper);
+    color: var(--primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  /* ── Panel ── */
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border-primary);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 720px;
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: var(--font-ui);
+    color: var(--tertiary);
+    background: transparent;
+  }
+  .tab.active { background: var(--secondary-alt); color: var(--primary); }
+  .tab:hover:not(.active) { background: var(--primary-hover); color: var(--secondary); }
+
+  /* ── Search ── */
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    border-bottom: 1.5px solid var(--border-primary);
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+    gap: 8px;
+  }
+  .search-wrap:focus-within { border-color: var(--secondary); }
+  .search-icon { color: var(--tertiary); flex-shrink: 0; }
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--primary);
+    background: transparent;
+    padding: 8px 0;
+  }
+  .search-input::placeholder { color: var(--quaternary); }
+
+  /* ── Filter pills ── */
+  .filters {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 12px 4px;
+    margin-bottom: 8px;
+    scrollbar-width: none;
+    letter-spacing: -0.4px;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter-pill {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 400;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: var(--font-ui);
+    color: var(--secondary);
+    background: transparent;
+  }
+  .filter-pill.active { background: var(--secondary-alt); color: var(--primary); }
+  .filter-pill:hover:not(.active) { background: var(--primary-hover); }
+
+  /* ── Content area ── */
+  .content {
+    overflow-y: auto;
+    max-height: calc(84svh - 160px);
+    padding-right: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-secondary) transparent;
+  }
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 4px; }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary);
+    line-height: 24px;
+    margin-bottom: 8px;
+  }
+
+  /* ── Series cards grid ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 560px) { .cards-grid { grid-template-columns: 1fr; } }
+
+  .series-card {
+    border: 1px solid var(--brand-200);
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    height: 208px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(27,25,24,.10), 0 1px 3px rgba(27,25,24,.07);
+    background: var(--leather);
+    transition: box-shadow 0.3s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    text-align: left;
+  }
+  .series-card:hover {
+    box-shadow: 0 16px 32px rgba(27,25,24,.14), 0 4px 8px rgba(27,25,24,.08);
+    transform: translateY(-4px);
+  }
+
+  /* Glare layer */
+
+  .series-card-bg {
+    position: absolute;
+    inset: -8%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    transition: background-position 0.1s linear;
+  }
+  .series-card-gradient {
+    position: absolute;
+    top: 40%; bottom: 0; left: 0; right: 0;
+    z-index: 1;
+    background: linear-gradient(rgba(0,0,0,0) 0%, rgba(27,25,24,0.82) 76.71%);
+  }
+  .series-card-body {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .series-card-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .series-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.12);
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(4px);
+  }
+
+  .bg-orchard    { background-image: url('/img/orchard.webp');          background-color: #3d2b1f; }
+  .bg-cavern     { background-image: url('/img/cavern.webp');           background-color: #1a2535; }
+  .bg-icelandic  { background-image: url('/img/icelandic-vibes.webp'); background-color: #2c3e50; }
+  .bg-serverless { background-image: url('/img/serverless.webp');       background-color: #1e2d3d; }
+
+  /* ── Project list ── */
+  .project-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 20px;
+    transition: background 0.15s;
+    gap: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .project-item:hover { background: var(--primary-hover); }
+
+  .project-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+  }
+  .project-dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--border-secondary);
+    background: var(--white);
+    flex-shrink: 0;
+  }
+  .project-info { min-width: 0; }
+  .project-title {
+    font-size: 15px;
+    color: var(--primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+  .project-title:hover { text-decoration: underline; text-underline-offset: 2px; }
+  .project-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+  .project-series-tag {
+    font-size: 11px;
+    color: var(--tertiary);
+    background: var(--secondary-alt);
+    padding: 1px 7px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  .project-arrow {
+    color: var(--quaternary);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .project-item:hover .project-arrow { opacity: 1; }
+
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <div class="tabs">
+    <button class="tab active">Explore</button>
+    <button class="tab">My Projects</button>
+  </div>
+
+  <div class="search-wrap">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <input class="search-input" type="text" placeholder="Search projects…">
+  </div>
+
+  <div class="filters">
+    <button class="filter-pill active">All</button>
+    <button class="filter-pill">Roadmaps</button>
+    <button class="filter-pill">Specialty</button>
+    <button class="filter-pill">Tools</button>
+  </div>
+
+  <div class="content">
+
+    <div class="section-label">Series (4)</div>
+    <div class="cards-grid">
+
+      <button class="series-card">
+        <div class="series-card-bg bg-orchard"></div>
+        <div class="series-card-gradient"></div>
+
+        <div class="series-card-body">
+          <div class="series-card-title">RAG API</div>
+          <div class="series-badge">2 Projects</div>
+        </div>
+      </button>
+
+      <button class="series-card">
+        <div class="series-card-bg bg-cavern"></div>
+        <div class="series-card-gradient"></div>
+
+        <div class="series-card-body">
+          <div class="series-card-title">Storage</div>
+          <div class="series-badge">1 Project</div>
+        </div>
+      </button>
+
+      <button class="series-card">
+        <div class="series-card-bg bg-icelandic"></div>
+        <div class="series-card-gradient"></div>
+
+        <div class="series-card-body">
+          <div class="series-card-title">Beginner AI Projects</div>
+          <div class="series-badge">20 Projects</div>
+        </div>
+      </button>
+
+      <button class="series-card">
+        <div class="series-card-bg bg-serverless"></div>
+        <div class="series-card-gradient"></div>
+
+        <div class="series-card-body">
+          <div class="series-card-title">AWS Lambda</div>
+          <div class="series-badge">4 Projects</div>
+        </div>
+      </button>
+
+    </div>
+
+    <div class="section-label">Projects (32)</div>
+    <div id="project-list"></div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var projects = [
+    { title: "Deploy a RAG API to Kubernetes",            url: "https://learn.nextwork.org/projects/ai-devops-kubernetes",          series: "RAG API"      },
+    { title: "Containerize a RAG API with Docker",        url: "https://learn.nextwork.org/projects/ai-devops-docker",              series: "RAG API"      },
+    { title: "Build a RAG API with FastAPI",              url: "https://learn.nextwork.org/projects/ai-devops-api",                 series: "RAG API"      },
+    { title: "Increase Test Coverage with AI",            url: "https://learn.nextwork.org/projects/ai-cicd-testgen",               series: null           },
+    { title: "Multi-Cloud Data Transfer with AWS and GCP",url: "https://learn.nextwork.org/projects/aws-multicloud-storage",        series: "Storage"      },
+    { title: "AI Email Router with Bedrock Flows",        url: "https://learn.nextwork.org/projects/aws-genai-bedrock-flows",       series: "Beginner AI"  },
+    { title: "Claude Code Skills Basics",                 url: "https://learn.nextwork.org/projects/ai-claude-code-skills",         series: null           },
+    { title: "Claude Code with Git Worktrees",            url: "https://learn.nextwork.org/projects/ai-git-worktrees",              series: null           },
+    { title: "Prompt Engineer a Lesson Plan",             url: "https://learn.nextwork.org/projects/ai-prompt-engineering-lesson",  series: "Beginner AI"  },
+    { title: "Automate Your Email Briefing with Claude",  url: "https://learn.nextwork.org/projects/ai-claude-email-briefing",      series: "Beginner AI"  },
+    { title: "Create a Docker Container using Cursor",    url: "https://learn.nextwork.org/projects/ai-mcp-docker",                 series: null           },
+    { title: "Set Up An AWS Account",                     url: "https://learn.nextwork.org/projects/aws-account-setup",             series: "Beginner AI"  },
+    { title: "Ship a Landing Page with v0 and Vercel",   url: "https://learn.nextwork.org/projects/ai-finops-vercel",               series: "Beginner AI"  },
+    { title: "Run Ollama On Your Own Machine",            url: "https://learn.nextwork.org/projects/ai-ollama-setup",               series: "Beginner AI"  },
+    { title: "AI Finance Agent with Amazon Bedrock",      url: "https://learn.nextwork.org/projects/aws-genai-bedrock-agent",       series: "Beginner AI"  },
+    { title: "Build a Calorie Tracker with Claude",       url: "https://learn.nextwork.org/projects/ai-claude-notion-calorie",      series: "Beginner AI"  },
+    { title: "Automate Your Calendar with AI",            url: "https://learn.nextwork.org/projects/ai-agent-nocode",               series: "Beginner AI"  },
+    { title: "Explore Claude.ai, Code, and Cowork",      url: "https://learn.nextwork.org/projects/ai-claude-compare",             series: "Beginner AI"  },
+    { title: "Build a Dashboard with Claude Artifacts",   url: "https://learn.nextwork.org/projects/ai-claude-artifacts",           series: "Beginner AI"  },
+    { title: "Build an AI Meeting Prep Assistant",        url: "https://learn.nextwork.org/projects/ai-cowork-meeting-assistant",   series: "Beginner AI"  },
+    { title: "Load Data into DynamoDB",                   url: "https://learn.nextwork.org/projects/aws-databases-dynamodb",        series: "Beginner AI"  },
+    { title: "Build an AI Chatbot with Amazon Bedrock",   url: "https://learn.nextwork.org/projects/aws-genai-bedrock-chatbot",     series: "Beginner AI"  },
+    { title: "APIs with Lambda + API Gateway",            url: "https://learn.nextwork.org/projects/aws-compute-api",               series: "AWS Lambda"   },
+    { title: "Orchestrating Parallel Event Streams with Azure", url: "https://learn.nextwork.org/projects/ai-azure-event-workflows", series: null          },
+    { title: "Build an Automated AI Briefing",            url: "https://learn.nextwork.org/projects/ai-openclaw-briefing",          series: "Beginner AI"  },
+    { title: "Host a Website on Amazon S3",               url: "https://learn.nextwork.org/projects/aws-host-a-website-on-s3",     series: "Beginner AI"  },
+    { title: "Fetch Data with AWS Lambda",                url: "https://learn.nextwork.org/projects/aws-compute-lambda",            series: "AWS Lambda"   },
+    { title: "Build a Blog Writing Crew with CrewAI",     url: "https://learn.nextwork.org/projects/ai-crewai-blog-writing-crew",   series: "Beginner AI"  },
+    { title: "Build a Fitness Coach with Claude",         url: "https://learn.nextwork.org/projects/ai-fitness-coach-dispatch",     series: "Beginner AI"  },
+    { title: "Prompt Engineering for Healthcare",         url: "https://learn.nextwork.org/projects/ai-prompt-engineering-healthcare", series: "Beginner AI"},
+    { title: "AI Security Scanner for Python",            url: "https://learn.nextwork.org/projects/ai-security-audit-copy",        series: null           },
+    { title: "Automate Testing with GitHub Actions",      url: "https://learn.nextwork.org/projects/ai-devops-githubactions",       series: null           },
+  ];
+
+  var list = document.getElementById('project-list');
+
+  projects.forEach(function (p) {
+    var item     = document.createElement('a');
+    item.href    = p.url;
+    item.target  = '_blank';
+    item.rel     = 'noopener noreferrer';
+    item.className = 'project-item';
+
+    var left = document.createElement('div');
+    left.className = 'project-left';
+
+    var dot = document.createElement('div');
+    dot.className = 'project-dot';
+
+    var info = document.createElement('div');
+    info.className = 'project-info';
+
+    var titleEl = document.createElement('span');
+    titleEl.className = 'project-title';
+    titleEl.textContent = p.title;
+
+    var meta = document.createElement('div');
+    meta.className = 'project-meta';
+
+    if (p.series) {
+      var tag = document.createElement('span');
+      tag.className = 'project-series-tag';
+      tag.textContent = p.series;
+      meta.appendChild(tag);
+    }
+
+    info.appendChild(titleEl);
+    info.appendChild(meta);
+    left.appendChild(dot);
+    left.appendChild(info);
+
+    var arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    arrowSvg.setAttribute('class', 'project-arrow');
+    arrowSvg.setAttribute('width', '14');
+    arrowSvg.setAttribute('height', '14');
+    arrowSvg.setAttribute('viewBox', '0 0 14 14');
+    arrowSvg.setAttribute('fill', 'none');
+    var arrowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    arrowPath.setAttribute('d', 'M3 7h8M7.5 3.5L11 7l-3.5 3.5');
+    arrowPath.setAttribute('stroke', 'currentColor');
+    arrowPath.setAttribute('stroke-width', '1.5');
+    arrowPath.setAttribute('stroke-linecap', 'round');
+    arrowPath.setAttribute('stroke-linejoin', 'round');
+    arrowSvg.appendChild(arrowPath);
+
+    item.appendChild(left);
+    item.appendChild(arrowSvg);
+    list.appendChild(item);
+  });
+
+  // Tab toggle (visual)
+  document.querySelectorAll('.tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  });
+
+  // Filter toggle (visual)
+  document.querySelectorAll('.filter-pill').forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      document.querySelectorAll('.filter-pill').forEach(function (p) { p.classList.remove('active'); });
+      pill.classList.add('active');
+    });
+  });
+
+  /* ── WebGL depth-parallax shader ── */
+  var IMG_URLS = {
+    'bg-orchard':   '/img/orchard.webp',
+    'bg-cavern':    '/img/cavern.webp',
+    'bg-icelandic': '/img/icelandic-vibes.webp',
+    'bg-serverless':'/img/serverless.webp',
+  };
+
+  var VERT = [
+    'attribute vec2 a_pos;',
+    'varying vec2 v_uv;',
+    'void main(){',
+    '  v_uv = a_pos * 0.5 + 0.5;',
+    '  gl_Position = vec4(a_pos, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  var FRAG = [
+    'precision mediump float;',
+    'uniform sampler2D u_tex;',
+    'uniform vec2  u_mouse;',
+    'uniform float u_scroll;',
+    'uniform float u_strength;',
+    'uniform float u_ca;',
+    'varying vec2 v_uv;',
+    'void main(){',
+    // Scale inward so edges never show during displacement
+    '  vec2 uv = (v_uv - 0.5) / 1.14 + 0.5;',
+    // Flip Y (WebGL bottom-left origin vs image top-left)
+    '  uv.y = 1.0 - uv.y;',
+    // Scroll offset (vertical drift)
+    '  uv.y += u_scroll;',
+    // Sample luminance at this UV to use as depth proxy
+    '  float luma = dot(texture2D(u_tex, uv).rgb, vec3(0.299, 0.587, 0.114));',
+    // Bright pixels appear closer: they shift more with mouse (parallax layers)
+    '  vec2 disp = -u_mouse * u_strength * (0.15 + luma * 0.85);',
+    '  vec2 duv  = uv + disp;',
+    // Subtle chromatic aberration: R/B shift slightly in opposite directions
+    '  float ca  = u_ca * length(u_mouse);',
+    '  float r   = texture2D(u_tex, duv + vec2( ca, 0.0)).r;',
+    '  float g   = texture2D(u_tex, duv                 ).g;',
+    '  float b   = texture2D(u_tex, duv - vec2( ca, 0.0)).b;',
+    '  gl_FragColor = vec4(r, g, b, 1.0);',
+    '}'
+  ].join('\n');
+
+  function initCardShader(card, cardIdx) {
+    var bgEl    = card.querySelector('.series-card-bg');
+    var bgCls   = Array.from(bgEl.classList).find(function(c){ return IMG_URLS[c]; });
+    if (!bgCls) return;
+
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:0;border-radius:inherit;display:block;';
+    bgEl.insertAdjacentElement('afterend', canvas);
+
+    var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) { canvas.remove(); return; }
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function resize() {
+      canvas.width  = card.offsetWidth  * dpr;
+      canvas.height = card.offsetHeight * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    resize();
+
+    function mkShader(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    }
+    var prog = gl.createProgram();
+    gl.attachShader(prog, mkShader(gl.VERTEX_SHADER,   VERT));
+    gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { canvas.remove(); return; }
+    gl.useProgram(prog);
+
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+    var aPos = gl.getAttribLocation(prog, 'a_pos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    var uMouse    = gl.getUniformLocation(prog, 'u_mouse');
+    var uScroll   = gl.getUniformLocation(prog, 'u_scroll');
+    var uStrength = gl.getUniformLocation(prog, 'u_strength');
+    var uCa       = gl.getUniformLocation(prog, 'u_ca');
+    gl.uniform1f(uStrength, 0.09);
+    gl.uniform1f(uCa,       0.010);
+    gl.uniform2f(uMouse,    0.0, 0.0);
+    gl.uniform1f(uScroll,   0.0);
+
+    // Placeholder 1×1 dark pixel while image loads
+    var tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([30,25,24,255]));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      bgEl.style.opacity = '0';   // shader is live — hide CSS fallback
+      scheduleRender();
+    };
+    img.onerror = function() { canvas.remove(); }; // CORS blocked → CSS bg stays
+    img.src = IMG_URLS[bgCls];
+
+    // Spring-lerped mouse state
+    var mx = 0, my = 0, tmx = 0, tmy = 0, scrollOff = 0, rafId = null;
+    var hovered = false;
+    var cardPhase = cardIdx * 1.3;   // stagger phase so cards drift out-of-sync
+
+    function render() {
+      rafId = null;
+      if (!hovered) {
+        var t = performance.now() / 1000;
+        tmx = Math.sin(t * 0.28 + cardPhase)       * 0.12;
+        tmy = Math.cos(t * 0.19 + cardPhase * 0.7) * 0.08;
+      }
+      mx += (tmx - mx) * 0.09;
+      my += (tmy - my) * 0.09;
+      gl.uniform2f(uMouse,  mx, my);
+      gl.uniform1f(uScroll, scrollOff);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      // Keep looping unless hovered AND spring has settled
+      var settled = hovered && Math.abs(tmx - mx) < 0.0002 && Math.abs(tmy - my) < 0.0002;
+      if (!settled) scheduleRender();
+    }
+    function scheduleRender() { if (!rafId) rafId = requestAnimationFrame(render); }
+
+    card.addEventListener('mouseenter', function() { hovered = true; });
+
+    card.addEventListener('mousemove', function(e) {
+      var r = card.getBoundingClientRect();
+      tmx = (e.clientX - r.left) / r.width  - 0.5;
+      tmy = (e.clientY - r.top)  / r.height - 0.5;
+      scheduleRender();
+    });
+
+    card.addEventListener('mouseleave', function() {
+      hovered = false;
+      scheduleRender();
+    });
+
+    function onScroll() {
+      var vh = window.innerHeight;
+      var r  = card.getBoundingClientRect();
+      scrollOff = Math.max(-1, Math.min(1, ((r.top + r.height/2) - vh/2) / (vh/2))) * 0.025;
+      scheduleRender();
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', function() { resize(); scheduleRender(); });
+    onScroll();
+    scheduleRender();
+  }
+
+  document.querySelectorAll('.series-card').forEach(function(card, idx) {
+    initCardShader(card, idx);
+  });
+
+  // ── Hole-eat exit transition ─────────────────────────────────────────────
+  var CARD_ACCENT = {
+    'bg-orchard':    '#C47A3A',
+    'bg-cavern':     '#3A7AAA',
+    'bg-icelandic':  '#4AAAA0',
+    'bg-serverless': '#7060C0',
+  };
+
+  var CARD_URL = {
+    'bg-orchard':    '/series/rag-api.html',
+    'bg-cavern':     'https://learn.nextwork.org/series/storage',
+    'bg-icelandic':  'https://learn.nextwork.org/series/beginner-ai',
+    'bg-serverless': 'https://learn.nextwork.org/series/aws-lambda',
+  };
+
+  var SERIES_DATA = {
+    'bg-orchard': {
+      title: 'RAG API',
+      description: 'Build retrieval-augmented generation APIs from scratch — containerize with Docker and deploy to Kubernetes at scale.',
+      level: 'Intermediate',
+      stack: 'Python · Docker · K8s',
+      time: '~6 hrs',
+      projects: [
+        'Build a RAG API with FastAPI',
+        'Containerize a RAG API with Docker',
+        'Deploy a RAG API to Kubernetes',
+      ],
+    },
+  };
+
+  function showSeriesPanel(accent, data, onBack) {
+    var panel = document.createElement('div');
+    panel.style.cssText = [
+      'position:fixed;inset:0;z-index:200',
+      'display:flex;flex-direction:column;overflow-y:auto',
+      'opacity:0;transition:opacity 0.45s ease',
+      'pointer-events:none;font-family:var(--font-ui)',
+    ].join(';');
+
+    var nav = document.createElement('nav');
+    nav.style.cssText = [
+      'display:flex;align-items:center;justify-content:space-between',
+      'padding:22px 40px;flex-shrink:0',
+      'border-bottom:1px solid rgba(196,122,58,0.16)',
+      'background:rgba(6,7,8,0.55);backdrop-filter:blur(16px)',
+    ].join(';');
+
+    var backBtn = document.createElement('button');
+    backBtn.style.cssText = [
+      'display:inline-flex;align-items:center;gap:7px',
+      'background:none;border:none;cursor:pointer;padding:0',
+      'font-size:13px;color:rgba(248,245,240,0.42)',
+      'font-family:var(--font-ui);letter-spacing:0.01em;transition:color 0.18s',
+    ].join(';');
+    backBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 3L6 8l4 5"/></svg> Projects';
+    backBtn.onmouseenter = function(){ this.style.color='rgba(248,245,240,0.92)'; };
+    backBtn.onmouseleave = function(){ this.style.color='rgba(248,245,240,0.42)'; };
+
+    var brand = document.createElement('span');
+    brand.textContent = 'Nextwork';
+    brand.style.cssText = 'font-family:var(--font-serif);font-size:15px;font-weight:300;color:rgba(248,245,240,0.42);letter-spacing:0.03em;';
+    nav.appendChild(backBtn);
+    nav.appendChild(brand);
+
+    var hero = document.createElement('div');
+    hero.style.cssText = 'padding:72px 40px 52px;max-width:860px;flex-shrink:0;';
+    hero.innerHTML = [
+      '<div style="font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:' + accent + ';margin-bottom:22px;">Series · ' + data.projects.length + ' projects</div>',
+      '<h1 style="font-family:var(--font-serif);font-size:clamp(52px,8vw,96px);font-weight:300;line-height:0.95;letter-spacing:-0.03em;color:rgba(248,245,240,0.92);margin-bottom:28px;">' + data.title + '</h1>',
+      '<p style="font-size:17px;line-height:1.65;color:rgba(248,245,240,0.42);max-width:500px;">' + data.description + '</p>',
+    ].join('');
+
+    var statsEl = document.createElement('div');
+    statsEl.style.cssText = [
+      'display:flex;gap:0;flex-shrink:0',
+      'border-top:1px solid rgba(196,122,58,0.16)',
+      'border-bottom:1px solid rgba(196,122,58,0.16)',
+      'background:rgba(6,7,8,0.52);backdrop-filter:blur(12px)',
+    ].join(';');
+    [
+      { value: data.projects.length, label: 'Projects' },
+      { value: data.level,           label: 'Level' },
+      { value: data.stack,           label: 'Stack' },
+      { value: data.time,            label: 'Est. time' },
+    ].forEach(function(s, i, arr) {
+      var sd = document.createElement('div');
+      sd.style.cssText = 'padding:20px 32px;' + (i < arr.length - 1 ? 'border-right:1px solid rgba(196,122,58,0.16);' : '');
+      sd.innerHTML = '<div style="font-size:22px;font-weight:500;color:rgba(248,245,240,0.92);letter-spacing:-0.01em;">' + s.value + '</div><div style="font-size:11px;color:rgba(248,245,240,0.42);margin-top:3px;letter-spacing:0.03em;">' + s.label + '</div>';
+      statsEl.appendChild(sd);
+    });
+
+    var projEl = document.createElement('div');
+    projEl.style.cssText = 'padding:48px 40px 64px;flex:1;';
+    var lh = '<div style="font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(248,245,240,0.42);margin-bottom:20px;">Projects</div><div style="display:flex;flex-direction:column;gap:10px;max-width:680px;">';
+    data.projects.forEach(function(p) {
+      lh += '<div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border:1px solid rgba(196,122,58,0.16);border-radius:10px;background:rgba(6,7,8,0.52);backdrop-filter:blur(14px);color:rgba(248,245,240,0.92);cursor:pointer;transition:background 0.18s,border-color 0.18s,transform 0.18s;" onmouseenter="this.style.background=\'rgba(196,122,58,0.09)\';this.style.borderColor=\'rgba(196,122,58,0.32)\';this.style.transform=\'translateX(5px)\'" onmouseleave="this.style.background=\'rgba(6,7,8,0.52)\';this.style.borderColor=\'rgba(196,122,58,0.16)\';this.style.transform=\'\'"><span style="font-size:14px;font-weight:500;">' + p + '</span><span style="color:rgba(248,245,240,0.42);font-size:16px;">→</span></div>';
+    });
+    lh += '</div>';
+    projEl.innerHTML = lh;
+
+    panel.appendChild(nav);
+    panel.appendChild(hero);
+    panel.appendChild(statsEl);
+    panel.appendChild(projEl);
+    document.body.appendChild(panel);
+    requestAnimationFrame(function() { panel.style.opacity = '1'; panel.style.pointerEvents = 'auto'; });
+
+    backBtn.addEventListener('click', function() {
+      panel.style.opacity = '0';
+      panel.style.pointerEvents = 'none';
+      setTimeout(function() { panel.remove(); onBack(); }, 450);
+    });
+  }
+
+  function drawPolarBlob(ctx, cx, cy, radii, scale) {
+    var N   = radii.length;
+    var pts = [];
+    for (var i = 0; i < N; i++) {
+      var angle = (i / N) * Math.PI * 2;
+      var r     = radii[i] * scale;
+      pts.push([cx + Math.cos(angle) * r, cy + Math.sin(angle) * r]);
+    }
+    ctx.beginPath();
+    var mid0x = (pts[0][0] + pts[N - 1][0]) / 2;
+    var mid0y = (pts[0][1] + pts[N - 1][1]) / 2;
+    ctx.moveTo(mid0x, mid0y);
+    for (var i = 0; i < N; i++) {
+      var next = (i + 1) % N;
+      var mx   = (pts[i][0] + pts[next][0]) / 2;
+      var my   = (pts[i][1] + pts[next][1]) / 2;
+      ctx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+    }
+    ctx.closePath();
+  }
+
+  function holeExit(title, accent, url, originX, originY, seriesData) {
+    document.body.style.pointerEvents = 'none';
+
+    // ── Iframe and Wrapper ──
+    var wrapper = document.getElementById('hole-wrapper');
+    var iframe = document.getElementById('preload-recreated-page');
+    if (!wrapper || !iframe) {
+      wrapper = document.createElement('div');
+      wrapper.id = 'hole-wrapper';
+      wrapper.style.cssText = 'position:fixed;inset:0;z-index:-100;pointer-events:none;opacity:0;filter:drop-shadow(0 0 20px rgba(0,0,0,0.12));';
+      iframe = document.createElement('iframe');
+      iframe.src = 'recreated-page.html';
+      iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
+      wrapper.appendChild(iframe);
+      document.body.appendChild(wrapper);
+    }
+
+    wrapper.style.zIndex = '101';
+    wrapper.style.opacity = '1';
+    wrapper.style.filter = 'drop-shadow(0 0 20px rgba(0,0,0,0.12))';
+    wrapper.style.clipPath = 'circle(0%)';
+    iframe.style.clipPath = 'none';
+
+    // ── SVG Border & Inner Shadow ──
+    var svg = document.getElementById('hole-border-svg');
+    var poly = document.getElementById('hole-border-poly');
+    var shadowPoly = document.getElementById('hole-inner-shadow');
+    if (!svg) {
+      svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.id = 'hole-border-svg';
+      svg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity 0.2s ease;';
+      var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+      filter.id = 'inner-shadow-blur';
+      var feBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+      feBlur.setAttribute('stdDeviation', '15');
+      filter.appendChild(feBlur);
+      defs.appendChild(filter);
+      svg.appendChild(defs);
+      shadowPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      shadowPoly.id = 'hole-inner-shadow';
+      shadowPoly.setAttribute('fill', 'none');
+      shadowPoly.setAttribute('stroke', 'rgba(0,0,0,0.06)');
+      shadowPoly.setAttribute('stroke-width', '40');
+      shadowPoly.setAttribute('filter', 'url(#inner-shadow-blur)');
+      svg.appendChild(shadowPoly);
+      poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      poly.id = 'hole-border-poly';
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke-width', '3');
+      svg.appendChild(poly);
+      wrapper.appendChild(svg);
+    }
+    svg.style.opacity = '1';
+    poly.setAttribute('stroke', accent);
+
+    // ── Pre-computed smooth ragged tear ──
+    var pts = 40;
+    var noise = [];
+    for (var i = 0; i < pts; i++) noise.push(((Math.random() - 0.5) * 12 + (Math.random() - 0.5) * 12) / 2);
+    // Smooth noise
+    var smNoise = [];
+    for (var i = 0; i < pts; i++) {
+      var p = noise[(i - 1 + pts) % pts];
+      var c = noise[i];
+      var n = noise[(i + 1) % pts];
+      smNoise.push((p + c * 2 + n) / 4);
+    }
+
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var cx = originX, cy = originY;
+    var cornerR = Math.sqrt(Math.pow(Math.max(cx, vw - cx), 2) + Math.pow(Math.max(cy, vh - cy), 2)) + 40;
+
+    // Pre-compute angles, cos/sin, and noise per point (never changes)
+    var angles = [], cosA = [], sinA = [];
+    for (var i = 0; i < pts; i++) {
+      var a = (i / pts) * Math.PI * 2;
+      angles.push(a);
+      cosA.push(Math.cos(a));
+      sinA.push(Math.sin(a));
+    }
+
+    // Pre-compute staggered delays per point
+    var del = [];
+    for (var i = 0; i < pts; i++) {
+      var d = Math.pow(Math.sin(i / pts * Math.PI * 5) * 0.5 + 0.5, 1.5) * 180;
+      d += (Math.random() - 0.5) * 30;
+      del.push(d < 0 ? 0 : d);
+    }
+
+    var DUR = 550;
+    var TOTAL_FRAMES = 38; // ~550ms at ~16ms per frame
+
+    // Pre-compute all frames: for each frame, store { css, svg }
+    // Each frame has pre-computed radii at that point in time
+    var frames = [];
+    var frameInterval = DUR / TOTAL_FRAMES;
+    for (var f = 0; f <= TOTAL_FRAMES; f++) {
+      var t = f * frameInterval; // elapsed time this frame represents
+      var cssPts = [], svgPts = [];
+      for (var i = 0; i < pts; i++) {
+        var progress = Math.max(0, Math.min(1, (t - del[i]) / DUR));
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var rad = eased * cornerR;
+        if (rad > 15) rad += smNoise[i];
+        var px = cx + cosA[i] * rad;
+        var py = cy + sinA[i] * rad;
+        cssPts.push(((px / vw) * 100).toFixed(2) + '% ' + ((py / vh) * 100).toFixed(2) + '%');
+        svgPts.push(px.toFixed(1) + ',' + py.toFixed(1));
+      }
+      frames.push({
+        css: 'polygon(' + cssPts.join(', ') + ')',
+        svg: svgPts.join(' ')
+      });
+    }
+
+    // Wait for iframe load before animating
+    function startHoleAnimation() {
+      var startTime = performance.now();
+      function loop(now) {
+        var elapsed = now - startTime;
+        var idx = Math.min(TOTAL_FRAMES, Math.floor(elapsed / frameInterval));
+        var shape = frames[idx];
+        wrapper.style.clipPath = shape.css;
+        poly.setAttribute('points', shape.svg);
+        shadowPoly.setAttribute('points', shape.svg);
+        if (idx >= TOTAL_FRAMES) {
+          svg.style.opacity = '0';
+          wrapper.style.clipPath = 'none';
+          window.location.href = iframe.src;
+          return;
+        }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function waitAndAnimate() {
+      setTimeout(startHoleAnimation, 120);
+    }
+    if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+      waitAndAnimate();
+    } else {
+      iframe.addEventListener('load', waitAndAnimate);
+    }
+  }
+
+  document.querySelectorAll('.series-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var r      = card.getBoundingClientRect();
+      var title  = card.querySelector('.series-card-title').textContent;
+      var bgCls  = Array.from(card.querySelector('.series-card-bg').classList)
+                       .find(function(c) { return CARD_ACCENT[c]; });
+      var accent = CARD_ACCENT[bgCls] || '#8B78D6';
+      var url    = CARD_URL[bgCls]    || '#';
+      holeExit(title, accent, url, r.left + r.width / 2, r.top + r.height / 2, SERIES_DATA[bgCls]);
+    });
+  });
+
+}());
+</script>
+<div id="hole-wrapper" style="position:fixed;inset:0;z-index:-100;pointer-events:none;opacity:0;">
+  <iframe id="preload-recreated-page" src="recreated-page.html" style="position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;" aria-hidden="true"></iframe>
+</div>
+</body>
+</html>

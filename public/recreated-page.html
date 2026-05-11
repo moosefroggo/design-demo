@@ -1,0 +1,2609 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NextWork - Ship a Landing Page with v0 and Vercel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+    @font-face {
+      font-family: 'FK Grotesk Neue';
+      src: url('/fonts/fk-grotesk-neue/woff2/FKGroteskNeue-Regular.woff2') format('woff2');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'FK Grotesk Neue';
+      src: url('/fonts/fk-grotesk-neue/woff2/FKGroteskNeue-Medium.woff2') format('woff2');
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'FK Grotesk Neue';
+      src: url('/fonts/fk-grotesk-neue/woff2/FKGroteskNeue-Bold.woff2') format('woff2');
+      font-weight: 600; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'FK Grotesk Neue';
+      src: url('/fonts/fk-grotesk-neue/woff2/FKGroteskNeue-Black.woff2') format('woff2');
+      font-weight: 800; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suisse Neue';
+      src: url('/fonts/suisse-neue/woff2/SuisseNeue-Regular-WebS.woff2') format('woff2');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suisse Neue';
+      src: url('/fonts/suisse-neue/woff2/SuisseNeue-Medium-WebS.woff2') format('woff2');
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+        :root {
+            --paper: #f8f5f1;
+            --white: #fff;
+            --leather: #1b1918;
+            --brand-25: #f5f3ff;
+            --brand-50: #ede9fe;
+            --brand-100: #ddd6fe;
+            --brand-200: #c4b5fd;
+            --brand-500: #8b5cf6;
+            --brand-600: #7c3aed;
+            --brand-700: #6d28d9;
+            --primary: #111827;
+            --secondary: #4b5563;
+            --tertiary: #6b7280;
+            --quaternary: #9ca3af;
+            --border-primary: #e5e7eb;
+            --border-secondary: #d1d5db;
+            --secondary-alt: #f3f4f6;
+            --primary-alt: #f9fafb;
+            --primary-hover: #f3f4f6;
+            --canary-200: #fef08a;
+            --canary-300: #fde047;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --shadow-xs: 0 1px 2px rgba(27, 25, 24, 0.05);
+            --shadow-sm: 0 1px 3px rgba(27, 25, 24, 0.08);
+            --shadow-md: 0 4px 6px rgba(27, 25, 24, 0.06);
+            --shadow-lg: 0 12px 16px -4px rgba(27, 25, 24, 0.08);
+            --left-width: 520px;
+            --right-width: 580px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family:
+                "FK Grotesk Neue",
+                -apple-system,
+                sans-serif;
+            background: var(--paper);
+            color: var(--primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+        }
+
+        .layout {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Left Panel */
+        .left {
+            width: var(--left-width);
+            flex-shrink: 0;
+            background: var(--white);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-primary);
+            position: relative;
+            z-index: 10;
+            transition:
+                margin-left 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+                width 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        .left.collapsed {
+            margin-left: calc(var(--left-width) * -1);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .left-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 24px;
+
+            min-width: var(--left-width);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--paper);
+            position: relative;
+            z-index: 5;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Right Docs Panel */
+        .docs {
+            width: var(--right-width);
+            flex-shrink: 0;
+            background: var(--paper);
+            border-left: 1px solid var(--border-primary);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            z-index: 10;
+            transition:
+                margin-right 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+                width 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        .docs.collapsed {
+            margin-right: calc(var(--right-width) * -1);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Panel Toggle Handles */
+        .panel-handle {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            width: 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: var(--white);
+            border: 1px solid var(--border-secondary);
+            transition:
+                background 0.2s,
+                box-shadow 0.2s;
+            opacity: 0;
+        }
+
+        .panel-handle:hover {
+            background: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .panel-handle svg {
+            width: 14px;
+            height: 14px;
+            color: var(--quaternary);
+            transition: color 0.2s;
+        }
+
+        .panel-handle:hover svg {
+            color: var(--secondary);
+        }
+
+        /* Show handles when panels are collapsed or on hover at edges */
+        .layout:hover .panel-handle,
+        .panel-handle.always-visible {
+            opacity: 1;
+        }
+
+        .handle-left {
+            left: -12px;
+            border-radius: 0 8px 8px 0;
+            border-left: none;
+        }
+
+        .handle-right {
+            right: -12px;
+            border-radius: 8px 0 0 8px;
+            border-right: none;
+        }
+
+        /* Edge hover zones that reveal handles */
+        .edge-zone {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 20px;
+            z-index: 49;
+        }
+
+        .edge-zone:hover+.panel-handle,
+        .edge-zone:hover~.panel-handle,
+        .panel-handle:hover {
+            opacity: 1;
+        }
+
+        .edge-zone-left {
+            left: 0;
+        }
+
+        .edge-zone-right {
+            right: 0;
+        }
+
+        /* Chat */
+        .chat-area {
+            padding: 12px 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-msg {
+            margin: 8px 0;
+        }
+
+        .chat-bubble {
+            background: var(--primary-alt);
+            border: 1px solid var(--border-secondary);
+            border-radius: var(--radius-lg);
+            border-top-left-radius: 0;
+            padding: 12px 14px;
+            max-width: 85%;
+            width: fit-content;
+        }
+
+        .concept-ref {
+            background: var(--primary-alt);
+            border-left: 4px solid var(--border-secondary);
+            padding-left: 12px;
+            margin: 8px 0;
+            font-size: 14px;
+            color: var(--tertiary);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            line-height: 1.4;
+        }
+
+        .input-area {
+            border-top: 1px solid var(--border-primary);
+            padding: 16px 0;
+
+        }
+
+        .input-wrap {
+            background: var(--paper);
+            border: 1px solid transparent;
+            border-radius: var(--radius-lg);
+            padding: 12px 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-wrap:focus-within {
+            border-color: var(--brand-200);
+            background: var(--white);
+        }
+
+        .input-box {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: 0 0;
+            font-size: 16px;
+            line-height: 1.5;
+            color: var(--primary);
+            resize: none;
+            min-height: 24px;
+            font-family: inherit;
+        }
+
+        .input-ft {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            padding: 0 4px;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .help-link {
+            font-size: 12px;
+            color: #1b1918;
+            text-decoration: underline;
+        }
+
+        .header {
+            padding: 64px 0 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--white);
+            border: 1px solid var(--border-secondary);
+            border-radius: var(--radius-lg);
+            padding: 4px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--leather);
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-top: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .desc {
+            color: var(--secondary);
+            margin-top: 8px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .avatar-stack {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatars {
+            display: flex;
+            margin-right: 8px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            object-fit: cover;
+            margin-left: -10px;
+            transition: transform 0.2s;
+            background: var(--secondary-alt);
+        }
+
+        .avatar:first-child {
+            margin-left: 0;
+        }
+
+        .avatar:hover {
+            transform: translateY(-2px);
+            z-index: 10;
+            position: relative;
+        }
+
+        .count {
+            font-size: 14px;
+            color: var(--tertiary);
+            margin-left: 8px;
+        }
+
+        .meta-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-primary);
+            border-bottom: 1px solid var(--border-primary);
+            padding-bottom: 40px;
+        }
+
+        .meta-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px 48px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .meta-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-secondary);
+            background: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-xs);
+            flex-shrink: 0;
+            color: var(--leather);
+        }
+
+        .meta-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .meta-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .meta-val {
+            font-size: 14px;
+            color: var(--tertiary);
+            text-transform: capitalize;
+        }
+
+        .meta-full {
+            display: flex;
+            align-items: flex-start;
+            gap: 4px;
+            margin-top: 24px;
+            width: 100%;
+        }
+
+        .meta-val-area {
+            width: 100%;
+            margin: 0;
+        }
+
+        .meta-val-area ul {
+            list-style: disc;
+            padding-left: 18px;
+        }
+
+        .meta-val-area li {
+            font-size: 14px;
+            color: var(--secondary);
+        }
+
+        .meta-val-area a {
+            color: #1b1918;
+            text-decoration: underline;
+        }
+
+        .editor {
+            margin-top: 32px;
+        }
+
+        .editor h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 36px 0 16px;
+        }
+
+        .editor h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 28px 0 12px;
+        }
+
+        .editor p {
+            color: var(--secondary);
+            margin-bottom: 12px;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .editor ul {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .editor li {
+            color: var(--secondary);
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .editor blockquote {
+            background: var(--brand-25);
+            border-left: 3px solid var(--brand-200);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            padding: 16px 20px;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+
+        .editor blockquote p {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .editor a {
+            color: #1b1918;
+            text-decoration: underline;
+        }
+
+        .editor strong {
+            color: var(--primary);
+        }
+
+        .hl {
+            background: var(--canary-200);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .cpill {
+            display: inline;
+            border-bottom: 2px dashed var(--brand-200);
+            padding: 0 2px;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+            transition: background 0.2s;
+        }
+
+        .cpill:hover {
+            background: var(--brand-50);
+        }
+
+        .iask {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--secondary-alt);
+            border-radius: 999px;
+            padding: 2px 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .iask:hover {
+            background: var(--border-secondary);
+        }
+
+        .iask svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .fig {
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .fig-wrap {
+            display: inline-block;
+            background: #f0ebe9;
+            border-radius: var(--radius-xl);
+            padding: 6%;
+            overflow: hidden;
+        }
+
+        .fig figcaption {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--tertiary);
+        }
+
+        .yt {
+            margin: 24px auto;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            max-width: 100%;
+        }
+
+        .yt iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: var(--radius-lg);
+        }
+
+        .track-section {
+            margin-top: 48px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin: 32px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border-primary);
+        }
+
+        .tabs {
+            display: flex;
+            border: 1px solid var(--border-secondary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            background: var(--white);
+            border: none;
+            border-right: 1px solid var(--border-secondary);
+            transition: all 0.2s;
+            color: var(--secondary);
+        }
+
+        .tab:last-child {
+            border-right: none;
+        }
+
+        .tab:hover {
+            background: var(--primary-hover);
+        }
+
+        .tab.act {
+            background: var(--leather);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .scroll-cta {
+            display: flex;
+            justify-content: center;
+            margin: 24px 0 48px;
+        }
+
+        .scroll-cta button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--leather);
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.2s;
+        }
+
+        .scroll-cta button:hover {
+            transform: translateY(2px);
+        }
+
+        .docs-hdr {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-primary);
+            background: rgba(248, 245, 241, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .docs-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            color: var(--primary);
+        }
+
+        .docs-hero {
+            text-align: center;
+            padding: 32px 24px;
+            position: relative;
+        }
+
+        .docs-hero-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            background: var(--white);
+            border: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .docs-hero-title {
+            font-size: 36px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+
+            margin: 0 auto;
+        }
+
+        .docs-hero-byline {
+            margin-top: 12px;
+            color: var(--secondary);
+            font-size: 16px;
+        }
+
+        .docs-hero-byline input {
+            border: none;
+            background: 0 0;
+            border-bottom: 2px solid transparent;
+            padding: 2px 4px;
+            font-size: inherit;
+            font-family: inherit;
+            color: inherit;
+            outline: none;
+            text-align: center;
+        }
+
+        .docs-hero-byline input:focus {
+            border-color: var(--brand-500);
+        }
+
+        .share-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: var(--brand-600);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        }
+
+        .share-btn:hover {
+            background: var(--brand-700);
+        }
+
+        .theme-section {
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .theme-cards {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 220px;
+        }
+
+        .tcard {
+            position: absolute;
+            width: 144px;
+            height: 144px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s;
+        }
+
+        .tcard:hover {
+            transform: scale(1.05);
+        }
+
+        .tcard-light {
+            background: var(--white);
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-16deg);
+            z-index: 1;
+        }
+
+        .tcard-dark {
+            background: var(--leather);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            box-shadow: 0 8px 30px rgba(27, 25, 24, 0.3);
+        }
+
+        .tcard-fun {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 10px;
+            right: 50%;
+            transform: translateX(50%) rotate(16deg);
+            z-index: 2;
+        }
+
+        .tcard-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--white);
+            border: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tcard-dark .tcard-icon {
+            background: var(--leather);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .tcard-label {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .tcard-light .tcard-label,
+        .tcard-fun .tcard-label {
+            color: var(--leather);
+        }
+
+        .tcard-dark .tcard-label {
+            color: var(--canary-300);
+        }
+
+        .tcard-label span {
+            display: block;
+        }
+
+        .fw5 {
+            font-weight: 500;
+        }
+
+        .fw9 {
+            font-weight: 900;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: 0 0;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--quaternary);
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary-hover);
+            color: var(--secondary);
+        }
+
+
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: 0 0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-secondary);
+            border-radius: 3px;
+        }
+
+        @media (max-width: 1200px) {
+            :root {
+                --left-width: 400px;
+                --right-width: 0px;
+            }
+
+            .docs {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --left-width: 100vw;
+            }
+
+            .left.collapsed {
+                margin-left: -100vw;
+            }
+
+            .main {
+                height: 50vh;
+            }
+
+            .layout {
+                flex-direction: column;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .docs-hero-title {
+                font-size: 28px;
+            }
+        }
+
+        /* Floating bottom nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            width: calc(100% - 32px);
+            max-width: 720px
+        }
+
+        .bottom-nav-inner {
+            background: var(--white);
+            padding: 8px 16px;
+            border: 1px solid var(--border-secondary);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 12px 16px -4px rgba(27, 25, 24, .08), 0 4px 6px -2px rgba(27, 25, 24, .03), 0 2px 2px -1px rgba(27, 25, 24, .04)
+        }
+
+        .bottom-nav-section {
+            display: flex;
+            align-items: center;
+            min-width: 48px
+        }
+
+        .bottom-nav-section:first-child {
+            justify-content: flex-start
+        }
+
+        .bottom-nav-section:last-child {
+            justify-content: flex-end
+        }
+
+        .bottom-nav-logo {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: transform .2s
+        }
+
+        .bottom-nav-logo:hover {
+            transform: scale(1.1)
+        }
+
+        .bottom-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .bottom-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            border: none;
+            background: transparent;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all .2s;
+            white-space: nowrap
+        }
+
+        .bottom-nav-btn:hover {
+            background: var(--brand-50)
+        }
+
+        .bottom-nav-btn svg {
+            width: 20px;
+            height: 20px;
+            color: var(--secondary)
+        }
+
+        .bottom-nav-btn span {
+            font-weight: 400
+        }
+
+        .bottom-nav-avatar {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--brand-200);
+            cursor: pointer;
+            overflow: hidden;
+            transition: filter .2s
+        }
+
+        .bottom-nav-avatar:hover {
+            filter: brightness(.95)
+        }
+
+        .bottom-nav-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .bottom-nav-avatar .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            position: absolute;
+            bottom: 0;
+            right: 0
+        }
+
+
+        /* Code snippet widget */
+        .code-widget {
+            margin: 24px 0;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            border: 1px solid var(--border-primary);
+            background: var(--white)
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 20px;
+            background: #ede5e3;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--secondary)
+        }
+
+        .code-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .code-header-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            border: none;
+            background: transparent;
+            color: var(--quaternary);
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .code-header-btn:hover {
+            background: #d9cdca;
+            color: #1b1918
+        }
+
+        .code-header-btn svg {
+            width: 16px;
+            height: 16px
+        }
+
+        .code-header-btn.pseudo-btn-active {
+            background: #c5b4b0;
+            color: #1b1918
+        }
+
+        .code-body {
+            padding: 16px 20px;
+            overflow-x: auto;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--primary);
+            background: var(--white)
+        }
+
+        .code-body code {
+            display: block;
+            white-space: pre
+        }
+
+        .code-keyword {
+            color: #7c3aed
+        }
+
+        .code-string {
+            color: #059669
+        }
+
+        .code-func {
+            color: #db2777
+        }
+
+        .code-comment {
+            color: var(--quaternary)
+        }
+
+        /* Pseudocode panel */
+        .code-pseudo {
+            display: none;
+            border-top: 1px solid var(--border-primary);
+            background: var(--brand-25)
+        }
+
+        .code-pseudo.visible {
+            display: block
+        }
+
+        .code-pseudo-hdr {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 20px 4px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: #1b1918
+        }
+
+        .code-pseudo pre {
+            padding: 10px 20px 16px;
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.75;
+            font-family: inherit;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl)
+        }
+
+
+        /* Text Highlighter */
+        .editor ::selection {
+            background: #e0e7ff
+        }
+
+        .editor .highlight {
+            color: inherit;
+            padding: .24em 0; /* Remove horizontal padding to stop layout 'jumps' */
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            display: inline;
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
+            background-color: var(--highlight-bg, #fef08a);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.07'/%3E%3C/svg%3E"),
+                linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0.5) 0%,
+                    rgba(255, 255, 255, 0.1) 30%,
+                    transparent 40%,
+                    transparent 80%,
+                    rgba(0, 0, 0, 0.05) 100%
+                );
+            /* Box shadow used for 3D effect AND to simulate padding without affecting layout */
+            box-shadow:
+                var(--hl-shadow-l, 0) 0 0 var(--highlight-bg, #fef08a),
+                var(--hl-shadow-r, 0) 0 0 var(--highlight-bg, #fef08a),
+                inset 0 1px 1px rgba(255, 255, 255, 0.7),
+                inset 0 -0.5px 1px rgba(0, 0, 0, 0.04);
+            transition: opacity .25s, filter .4s;
+            mix-blend-mode: multiply; /* Ensures text underneath and adjacent remains visible */
+        }
+
+        .editor .highlight:hover {
+            opacity: .88;
+            filter: url(#paste-texture-hover);
+            -webkit-filter: url(#paste-texture-hover)
+        }
+
+        .editor .highlight.highlight-drawing {
+            animation: highlight-draw .45s cubic-bezier(.22, .61, .36, 1) forwards;
+        }
+
+        .editor .highlight.highlight-drawn {
+            filter: url(#paste-texture);
+            -webkit-filter: url(#paste-texture)
+        }
+
+        @keyframes highlight-draw {
+            0% {
+                clip-path: inset(0 100% 0 0);
+                opacity: .3
+            }
+
+            15% {
+                opacity: .9
+            }
+
+            60% {
+                clip-path: inset(0 0 0 0);
+                opacity: .85
+            }
+
+            75% {
+                opacity: .9
+            }
+
+            100% {
+                clip-path: inset(0 0 0 0);
+                opacity: .88
+            }
+        }
+
+        /* Highlighter Popup */
+        .hl-popup {
+            position: fixed;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(6px);
+            transition: opacity .2s, transform .2s
+        }
+
+        .hl-popup.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0)
+        }
+
+        .hl-popup-inner {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #fff;
+            border: 1px solid var(--border-secondary);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            white-space: nowrap
+        }
+
+        .hl-popup-arrow {
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 6px;
+            background: #fff;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            border-left: 1px solid var(--border-secondary);
+            border-right: 1px solid var(--border-secondary);
+            border-bottom: 1px solid var(--border-secondary)
+        }
+
+        .hl-color {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            position: relative;
+            transition: all .15s;
+            outline: none;
+            flex-shrink: 0
+        }
+
+        .hl-color:hover {
+            transform: scale(1.18);
+            border-color: rgba(0, 0, 0, .1)
+        }
+
+        .hl-color.active {
+            border-color: #1b1918;
+            box-shadow: 0 0 0 2px var(--brand-50)
+        }
+
+        .hl-check {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 0, 0, .45);
+            opacity: 0;
+            transition: opacity .15s
+        }
+
+        .hl-color.active .hl-check {
+            opacity: 1
+        }
+
+        .hl-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border-secondary);
+            margin: 0 2px
+        }
+
+        .hl-action {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: 0 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--quaternary);
+            transition: all .15s;
+            outline: none
+        }
+
+        .hl-action:hover {
+            background: var(--secondary-alt);
+            color: #ef4444
+        }
+
+        .hl-toast {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 18px;
+            background: var(--leather);
+            color: #fff;
+            border-radius: var(--radius-lg);
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(16px);
+            pointer-events: none;
+            transition: all .3s;
+            z-index: 600
+        }
+
+        .hl-toast.show {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        /* Secret Mission Lock Animation */
+
+        #mask-move-group {
+            transform-origin: center;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #lock-left,
+        #lock-right {
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <svg class="filter-defs" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+        <defs>
+            <filter id="paste-texture" x="-20%" y="-20%" width="140%" height="160%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="3" result="roughness" />
+                <feDisplacementMap in="SourceGraphic" in2="roughness" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="rough-edges" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
+                <feSpecularLighting in="blur" surfaceScale="6" specularConstant="1.5" specularExponent="35" lighting-color="#fff" result="spec">
+                    <fePointLight x="-100" y="-100" z="150" />
+                </feSpecularLighting>
+                <feComposite in="spec" in2="SourceGraphic" operator="in" result="highlight-shine" />
+                <feComposite in="rough-edges" in2="highlight-shine" operator="arithmetic" k1="0" k2="1" k3="0.8" k4="0" result="lit" />
+
+            </filter>
+            <filter id="paste-texture-hover" x="-20%" y="-20%" width="140%" height="160%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="3" result="roughness" />
+                <feDisplacementMap in="SourceGraphic" in2="roughness" scale="1.2" xChannelSelector="R" yChannelSelector="G" result="rough-edges" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
+                <feSpecularLighting in="blur" surfaceScale="8" specularConstant="1.8" specularExponent="30" lighting-color="#fff" result="spec">
+                    <fePointLight x="-80" y="-80" z="180" />
+                </feSpecularLighting>
+                <feComposite in="spec" in2="SourceGraphic" operator="in" result="highlight-shine" />
+                <feComposite in="rough-edges" in2="highlight-shine" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="lit" />
+
+            </filter>
+        </defs>
+    </svg>
+    <div class="layout">
+        <div class="left collapsed" id="left-panel">
+            <div class="left-content">
+                <div class="chat-area">
+                    <div class="chat-msg">
+                        <div class="chat-bubble">
+                            <div class="concept-ref">
+                                v0.dev is an AI-powered UI generator by
+                                Vercel that transforms natural language
+                                prompts into production-ready frontend code,
+                                typically using React, Next.js, and Tailwind
+                                CSS. It enables rapid prototyping and
+                                deployment of web applications and
+                                components.
+                            </div>
+                            <p style="
+                                        margin-top: 12px;
+                                        font-size: 15px;
+                                        color: var(--primary);
+                                    ">
+                                Go into more detail about this
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chat-msg" style="margin-top: 16px">
+                        <p style="
+                                    font-size: 15px;
+                                    color: var(--primary);
+                                    margin-bottom: 10px;
+                                ">
+                            Great question, Mustafa! Let's dive deeper into
+                            <span class="cpill">v0.dev</span>.
+                        </p>
+                        <h3 style="
+                                    font-size: 18px;
+                                    font-weight: 600;
+                                    margin: 16px 0 8px;
+                                ">
+                            What is v0.dev?
+                        </h3>
+                        <p style="
+                                    font-size: 15px;
+                                    color: var(--secondary);
+                                    margin-bottom: 8px;
+                                    line-height: 1.7;
+                                ">
+                            <span class="cpill">v0.dev</span> is a
+                            generative UI tool built by
+                            <span class="cpill">Vercel</span> - the same
+                            company behind
+                            <span class="cpill">Next.js</span>. You describe
+                            what you want in plain English, and v0 generates
+                            fully functional frontend code for you.
+                        </p>
+                        <h3 style="
+                                    font-size: 18px;
+                                    font-weight: 600;
+                                    margin: 16px 0 8px;
+                                ">
+                            How It Works
+                        </h3>
+                        <ol style="
+                                    padding-left: 24px;
+                                    font-size: 15px;
+                                    color: var(--secondary);
+                                    line-height: 1.8;
+                                ">
+                            <li>
+                                <strong>Prompt Analysis</strong> -
+                                Interprets natural language to understand
+                                layout, components, and styling.
+                            </li>
+                            <li>
+                                <strong>Component Generation</strong> -
+                                Produces React components using JSX.
+                            </li>
+                            <li>
+                                <strong>Tailwind CSS</strong> - All styling
+                                uses Tailwind CSS utility classes.
+                            </li>
+                            <li>
+                                <strong>shadcn/ui</strong> - Leverages
+                                shadcn/ui, an open-source component library.
+                            </li>
+                            <li>
+                                <strong>Live Preview</strong> - Interactive
+                                preview right in the browser.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="input-area" style="">
+                <div class="input-wrap">
+                    <div contenteditable="true" class="input-box" data-placeholder="Ask anything"></div>
+                </div>
+                <div class="input-ft">
+                    <div class="input-actions">
+                        <button class="btn-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <path d="M21 15l-5-5L5 21" />
+                            </svg>
+                        </button>
+                        <button class="btn-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                                <line x1="12" x2="12" y1="19" y2="22" />
+                            </svg>
+                        </button>
+                        <button class="btn-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                <path d="M3 3v5h5" />
+                            </svg>
+                        </button>
+                    </div>
+                    <a href="#" class="help-link">Still stuck? Get help from a human</a>
+                </div>
+            </div>
+            <div style="text-align: center; margin: 8px 0">
+                <button style="
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            background: var(--leather);
+                            border: none;
+                            color: white;
+                            cursor: pointer;
+                            box-shadow: var(--shadow-lg);
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                        ">
+                    <svg width="16" height="16" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M1 1.5l5 5 5-5" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="main" id="main-panel">
+            <div class="container">
+                <div class="header">
+                    <div class="badge">
+                        <span class="badge-dot"></span> FinOps x AI
+                    </div>
+                    <h1 class="title">
+                        Ship a Landing Page with v0 and Vercel
+                    </h1>
+                    <p class="desc">
+                        Build an e-commerce landing page with AI, deploy
+                        with one click, and get automatic HTTPS and edge
+                        protection.
+                    </p>
+                    <div class="meta-row">
+                        <div class="avatar-stack">
+                            <div class="avatars">
+                                <img class="avatar"
+                                    src="https://ui-avatars.com/api/?name=U1&amp;background=ddd6fe&amp;color=7c3aed&amp;size=72"
+                                    alt="" />
+                                <img class="avatar"
+                                    src="https://ui-avatars.com/api/?name=U2&amp;background=c4b5fd&amp;color=7c3aed&amp;size=72"
+                                    alt="" />
+                                <img class="avatar"
+                                    src="https://ui-avatars.com/api/?name=U3&amp;background=ede9fe&amp;color=7c3aed&amp;size=72"
+                                    alt="" />
+                                <img class="avatar"
+                                    src="https://ui-avatars.com/api/?name=U4&amp;background=e0e7ff&amp;color=6366f1&amp;size=72"
+                                    alt="" />
+                                <img class="avatar"
+                                    src="https://ui-avatars.com/api/?name=U5&amp;background=f3e8ff&amp;color=8b5cf6&amp;size=72"
+                                    alt="" />
+                            </div>
+                            <span class="count">50+ completed</span>
+                        </div>
+                        <button class="btn-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                <path d="M3 3v5h5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="meta-section">
+                    <div class="meta-grid">
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 17" fill="none" stroke="currentColor"
+                                    stroke-width="1.3">
+                                    <rect x="1" y="2" width="14" height="12" rx="1" />
+                                    <path d="M4 6h3M4 9h2" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="meta-label">DIFFICULTY</div>
+                                <div class="meta-val">Easy peasy</div>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <polyline points="12 6 12 12 16 14" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="meta-label">TIME</div>
+                                <div class="meta-val">45 min</div>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+                                    stroke-width="1.3">
+                                    <rect x="2.5" y="4" width="15" height="13" rx="1" />
+                                    <path d="M2.5 8h15" />
+                                    <path d="M7 2v3M13 2v3" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="meta-label">REFRESHED</div>
+                                <div class="meta-val">16th Feb '26</div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="editor">
+                    <h3 id="toc-summary">30 Second Summary</h3>
+                    <p>
+                        Updating your website used to mean waiting days for
+                        someone else to deploy it. Now you can push changes
+                        and see them live in minutes.
+                    </p>
+                    <p>
+                        In this project, you will build a landing page
+                        without writing code from scratch: describe what you
+                        want in plain English, let
+                        <span class="cpill">v0.dev</span> generate the code,
+                        and deploy it to
+                        <span class="cpill">Vercel</span> with one click.
+                    </p>
+                    <h3 id="toc-build">
+                        What You Will Build
+                    </h3>
+                    <p>
+                        Together, we will create a complete e-commerce
+                        landing page using
+                        <span class="cpill">v0.dev</span>, then deploy it to
+                        <span class="cpill">Vercel</span> with automatic
+                        security.
+                    </p>
+
+                    <div class="code-widget">
+                        <div class="code-header">
+                            <span>python</span>
+                            <div class="code-header-actions">
+                                <button class="code-header-btn" title="Expand code"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="1.5">
+                                        <path
+                                            d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15" />
+                                    </svg></button>
+                                <button class="code-header-btn" title="Ask about this code"><svg viewBox="0 0 20 21"
+                                        fill="none" stroke="currentColor" stroke-width="1.67">
+                                        <path
+                                            d="M2.5 7.12c0-1.4 0-2.1.27-2.63a2.5 2.5 0 0 1 1.1-1.1C4.4 3.13 5.1 3.13 6.5 3.13h7c1.4 0 2.1 0 2.63.27a2.5 2.5 0 0 1 1.1 1.1c.27.53.27 1.23.27 2.63v4.5c0 1.4 0 2.1-.27 2.63a2.5 2.5 0 0 1-1.1 1.1c-.53.27-1.23.27-2.63.27H8.07c-.52 0-.78 0-1.03.05a2.5 2.5 0 0 0-.63.22c-.23.12-.43.28-.84.6l-1.99 1.59c-.34.28-.52.42-.66.42a.41.41 0 0 1-.33-.16c-.09-.12-.09-.35-.09-.8V7.12Z" />
+                                    </svg></button>
+                                <button class="code-header-btn" title="Copy code"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="1.5">
+                                        <path
+                                            d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                                    </svg></button>
+                                <button class="code-header-btn pseudo-toggle-btn"
+                                    title="Toggle plain-English explanation"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+                                        <path d="M9 18h6" />
+                                        <path d="M10 22h4" />
+                                    </svg></button>
+                            </div>
+                        </div>
+                        <div class="code-body"><code><span class="code-keyword">import</span> requests
+
+<span class="code-keyword">def</span> <span class="code-func">fetch_data</span>(url):
+    <span class="code-comment"># Make an API request</span>
+    response = requests.get(url)
+    <span class="code-keyword">if</span> response.status_code == <span class="code-string">200</span>:
+        <span class="code-keyword">return</span> response.json()
+    <span class="code-keyword">return</span> <span class="code-keyword">None</span>
+
+<span class="code-comment"># Deploy to Vercel with one click</span>
+data = fetch_data(<span class="code-string">"https://api.example.com"</span>)</code></div>
+                        <div class="code-pseudo" id="pseudo-panel-1">
+                            <div class="code-pseudo-hdr">
+                                <span>Plain English</span>
+                                <span class="pseudo-status"
+                                    style="font-weight:400;color:var(--quaternary);text-transform:none;letter-spacing:0"></span>
+                            </div>
+                            <pre></pre>
+                        </div>
+                    </div>
+
+                    <figure class="fig" id="toc-diagram">
+                        <div class="fig-wrap">
+                            <div style="
+                                        background: linear-gradient(
+                                            135deg,
+                                            #667eea,
+                                            #764ba2,
+                                            #f093fb
+                                        );
+                                        border-radius: 8px;
+                                        padding: 40px 60px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 40px;
+                                    ">
+                                <div style="
+                                            background: rgba(
+                                                255,
+                                                255,
+                                                255,
+                                                0.2
+                                            );
+                                            backdrop-filter: blur(8px);
+                                            border-radius: 12px;
+                                            padding: 20px 30px;
+                                            color: #fff;
+                                            font-weight: 700;
+                                            font-size: 18px;
+                                        ">
+                                    v0.dev
+                                </div>
+                                <div style="color: #fff; font-size: 24px">
+                                    &#8594;
+                                </div>
+                                <div style="
+                                            background: rgba(
+                                                255,
+                                                255,
+                                                255,
+                                                0.2
+                                            );
+                                            backdrop-filter: blur(8px);
+                                            border-radius: 12px;
+                                            padding: 20px 30px;
+                                            color: #fff;
+                                            font-weight: 700;
+                                            font-size: 18px;
+                                        ">
+                                    Vercel
+                                </div>
+                            </div>
+                        </div>
+                        <figcaption>
+                            v0.dev to Vercel deployment flow
+                        </figcaption>
+                    </figure>
+                    <p id="toc-outcomes">
+                        By the end of this project, you will have:
+                    </p>
+                    <ul>
+                        <li>
+                            A
+                            <strong>production-ready landing page</strong>
+                            generated from plain English prompts.
+                        </li>
+                        <li>
+                            <strong>Live deployment on Vercel</strong> with
+                            automatic HTTPS and edge caching.
+                        </li>
+                        <li>
+                            <strong>Secret Mission:</strong> Iterate on your
+                            v0 prompt to improve your design.
+                        </li>
+                    </ul>
+                    <p>
+                        Want a complete demo? Check out our
+                        <a href="#">walkthrough with Kahu</a> or
+                        <a href="#">fast track it with Maximus</a>
+                    </p>
+                    <div class="yt" id="toc-demo">
+                        <iframe src="https://www.youtube.com/embed/A99_GxxMlw8?iv_load_policy=3&amp;modestbranding=1"
+                            allowfullscreen></iframe>
+                    </div>
+                    <blockquote>
+                        <p>
+                            <strong>Is v0.dev free?</strong><br />Yes!
+                            v0.dev has a free tier that is perfect for this
+                            project. You can generate multiple iterations of
+                            your design without paying anything.
+                        </p>
+                    </blockquote>
+                    <p>
+                        Not sure if this project is right for you?
+                        <span class="iask"><svg viewBox="0 0 20 21" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path
+                                    d="M2.5 7.12c0-1.4 0-2.1.27-2.63a2.5 2.5 0 0 1 1.1-1.1C4.4 3.13 5.1 3.13 6.5 3.13h7c1.4 0 2.1 0 2.63.27a2.5 2.5 0 0 1 1.1 1.1c.27.53.27 1.23.27 2.63v4.5c0 1.4 0 2.1-.27 2.63a2.5 2.5 0 0 1-1.1 1.1c-.53.27-1.23.27-2.63.27H8.07c-.52 0-.78 0-1.03.05a2.5 2.5 0 0 0-.63.22c-.23.12-.43.28-.84.6l-1.99 1.59c-.34.28-.52.42-.66.42a.41.41 0 0 1-.33-.16c-.09-.12-.09-.35-.09-.8V7.12Z" />
+                            </svg>
+                            Check if it matches your goals</span>
+                    </p>
+                    <h2 id="toc-start">Start Your Project Here</h2>
+                    <p>Pick the learning style that fits you best.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="docs collapsed" id="docs-panel">
+            <div class="docs-hdr">
+                <button class="docs-title">
+                    Documentation
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4M12 8h.01" />
+                    </svg>
+                </button>
+                <div style="display: flex; gap: 4px">
+                    <button class="btn-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M18 10V3.6c0-.56 0-.84-.11-1.05a1 1 0 0 0-.44-.44C17.24 2 16.96 2 16.4 2H7.6c-.56 0-.84 0-1.05.11a1 1 0 0 0-.44.44C6 2.76 6 3.04 6 3.6V10m12 0H6m12 0v.2c0 1.68 0 2.52-.33 3.16a3 3 0 0 1-1.31 1.31c-.64.33-1.48.33-3.16.33h-2.4c-1.68 0-2.52 0-3.16-.33a3 3 0 0 1-1.31-1.31C6 12.72 6 11.88 6 10.2V10m8.5 5v4.5a2.5 2.5 0 0 1-5 0V15" />
+                        </svg>
+                    </button>
+                    <button class="btn-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="m14 10 7-7m0 0h-6m6 0v6m-11 5-7 7m0 0h6m-6 0v-6" />
+                        </svg>
+                    </button>
+                    <button class="btn-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17 7 7 17M7 7l10 10" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="docs-hero">
+                <div class="docs-hero-icon">
+                    <svg width="32" height="32" viewBox="0 0 256 256" fill="currentColor">
+                        <path
+                            d="M245.94 78.174c-6.445-15.242-15.675-28.93-27.429-40.685-11.755-11.754-25.443-20.984-40.685-27.43C162.042 3.386 145.279 0 128 0c-17.279 0-34.042 3.385-49.826 10.06-15.242 6.445-28.93 15.675-40.685 27.43-11.754 11.754-20.984 25.442-27.43 40.684C3.386 93.958 0 110.721 0 128c0 17.279 3.385 34.042 10.06 49.826 6.445 15.242 15.675 28.93 27.43 40.685 11.754 11.754 25.442 20.984 40.684 27.429C93.958 252.615 110.721 256 128 256c17.279 0 34.042-3.385 49.826-10.06 15.242-6.445 28.93-15.675 40.685-27.429 11.754-11.755 20.984-25.443 27.429-40.685C252.615 162.042 256 145.279 256 128c0-17.279-3.385-34.042-10.06-49.826Z" />
+                    </svg>
+                </div>
+                <h1 class="docs-hero-title">
+                    Ship a Landing Page with v0 and Vercel
+                </h1>
+                <div class="docs-hero-byline">
+                    <span>By</span>
+                    <input type="text" value="Mustafa Ali Akbar" />
+                    <span style="margin: 0 8px; opacity: 0.5">|</span>
+                    <span>May 2026</span>
+                </div>
+                <button class="share-btn">
+                    Share Work
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m14 10 7-7m0 0h-6m6 0v6m-11 5-7 7m0 0h6m-6 0v-6" />
+                    </svg>
+                </button>
+            </div>
+            <div class="theme-section">
+                <p style="
+                            font-weight: 700;
+                            font-size: 18px;
+                            color: var(--primary);
+                        ">
+                    Your portfolio builds as you work
+                </p>
+                <p style="margin-top: 4px">
+                    Each task creates professional documentation you can
+                    share with employers and the world instantly!
+                </p>
+                <div class="theme-cards">
+                    <div class="tcard tcard-light">
+                        <div class="tcard-icon">
+                            <svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor">
+                                <path
+                                    d="M245.94 78.174c-6.445-15.242-15.675-28.93-27.429-40.685-11.755-11.754-25.443-20.984-40.685-27.43C162.042 3.386 145.279 0 128 0c-17.279 0-34.042 3.385-49.826 10.06-15.242 6.445-28.93 15.675-40.685 27.43-11.754 11.754-20.984 25.442-27.43 40.684C3.386 93.958 0 110.721 0 128c0 17.279 3.385 34.042 10.06 49.826 6.445 15.242 15.675 28.93 27.43 40.685 11.754 11.754 25.442 20.984 40.684 27.429C93.958 252.615 110.721 256 128 256c17.279 0 34.042-3.385 49.826-10.06 15.242-6.445 28.93-15.675 40.685-27.429 11.754-11.755 20.984-25.443 27.429-40.685C252.615 162.042 256 145.279 256 128c0-17.279-3.385-34.042-10.06-49.826Z" />
+                            </svg>
+                        </div>
+                        <div class="tcard-label">
+                            <span class="fw5">light</span><span class="fw9">mode</span>
+                        </div>
+                    </div>
+                    <div class="tcard tcard-dark">
+                        <div class="tcard-icon">
+                            <svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor">
+                                <path
+                                    d="M245.94 78.174c-6.445-15.242-15.675-28.93-27.429-40.685-11.755-11.754-25.443-20.984-40.685-27.43C162.042 3.386 145.279 0 128 0c-17.279 0-34.042 3.385-49.826 10.06-15.242 6.445-28.93 15.675-40.685 27.43-11.754 11.754-20.984 25.442-27.43 40.684C3.386 93.958 0 110.721 0 128c0 17.279 3.385 34.042 10.06 49.826 6.445 15.242 15.675 28.93 27.43 40.685 11.754 11.754 25.442 20.984 40.684 27.429C93.958 252.615 110.721 256 128 256c17.279 0 34.042-3.385 49.826-10.06 15.242-6.445 28.93-15.675 40.685-27.429 11.754-11.755 20.984-25.443 27.429-40.685C252.615 162.042 256 145.279 256 128c0-17.279-3.385-34.042-10.06-49.826Z" />
+                            </svg>
+                        </div>
+                        <div class="tcard-label">
+                            <span class="fw5">dark</span><span class="fw9">mode</span>
+                        </div>
+                    </div>
+                    <div class="tcard tcard-fun">
+                        <div class="tcard-icon">
+                            <svg width="12" height="12" viewBox="0 0 12 13" fill="none">
+                                <path
+                                    d="M6.21 2.43c1.47 1.39 3.08 2.63 4.8 3.7l.99.62C11.87 3.55 9.23 1 6 1c-.4 0-.8.04-1.18.12l1.39 1.31ZM5.92 2.73 4.34 1.23C3.41 1.5 2.58 1.98 1.9 2.62c2.74 1.75 5.72 3.05 8.87 3.86A13.4 13.4 0 0 1 5.92 2.73Z"
+                                    fill="#1b1918" />
+                                <path
+                                    d="M10.33 6.79A36.5 36.5 0 0 0 1.65 2.95c-.95 1.22-1.55 2.58-1.6 4.07h10.28ZM1.7 11.01a36.5 36.5 0 0 1 8.64-3.8H0c.05 1.49.65 2.84 1.6 3.87l.1-.07Z"
+                                    fill="#1b1918" />
+                                <path
+                                    d="M10.94 7.91a36.5 36.5 0 0 1-4.69 3.62l-1.43 1.35c.38.08.77.12 1.18.12 3.23 0 5.87-2.55 6-5.75l-1.06.66Z"
+                                    fill="#1b1918" />
+                                <path
+                                    d="M5.97 11.23A13.4 13.4 0 0 1 10.72 7.56l.05-.04a36.5 36.5 0 0 0-8.85 3.85l-.02.01c.68.64 1.51 1.12 2.43 1.39l1.64-1.54Z"
+                                    fill="#1b1918" />
+                            </svg>
+                        </div>
+                        <div class="tcard-label">
+                            <span class="fw5">fun</span><span class="fw9">mode</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var leftPanel = document.getElementById("left-panel");
+            var docsPanel = document.getElementById("docs-panel");
+            var toggleLeft = document.getElementById("toggle-left");
+            var toggleRight = document.getElementById("toggle-right");
+
+            var styles = getComputedStyle(document.documentElement);
+            var leftWidth = parseInt(
+                styles.getPropertyValue("--left-width").trim(),
+            );
+            var rightWidth = parseInt(
+                styles.getPropertyValue("--right-width").trim(),
+            );
+
+            function togglePanel(panel, btn, isLeft) {
+                var isOpen = !panel.classList.contains("collapsed");
+
+                if (isOpen) {
+                    // Collapse
+                    panel.classList.add("collapsed");
+                    btn.classList.remove("active");
+                    btn.classList.add("collapsed");
+                } else {
+                    // Expand
+                    panel.classList.remove("collapsed");
+                    btn.classList.add("active");
+                    btn.classList.remove("collapsed");
+                }
+            }
+
+            if (toggleLeft) {
+                toggleLeft.addEventListener("click", function () {
+                    togglePanel(leftPanel, toggleLeft, true);
+                });
+            }
+
+            if (toggleRight) {
+                toggleRight.addEventListener("click", function () {
+                    if (window.innerWidth > 1200) {
+                        togglePanel(docsPanel, toggleRight, false);
+                    }
+                });
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener("keydown", function (e) {
+                if (
+                    (e.metaKey || e.ctrlKey) &&
+                    !e.shiftKey &&
+                    e.key === "b"
+                ) {
+                    e.preventDefault();
+                    if (toggleLeft) { togglePanel(leftPanel, toggleLeft, true); }
+                }
+                if (
+                    (e.metaKey || e.ctrlKey) &&
+                    e.shiftKey &&
+                    e.key === "B"
+                ) {
+                    e.preventDefault();
+                    if (toggleRight && window.innerWidth > 1200) {
+                        togglePanel(docsPanel, toggleRight, false);
+                    }
+                }
+            });
+
+            // Responsive handler
+            function handleResize() {
+                if (!toggleRight) { return; }
+                if (window.innerWidth <= 1200) {
+                    toggleRight.style.opacity = "0.4";
+                    toggleRight.style.pointerEvents = "none";
+                    toggleRight.title =
+                        "Documentation panel unavailable at this screen size";
+                } else {
+                    toggleRight.style.opacity = "";
+                    toggleRight.style.pointerEvents = "";
+                    toggleRight.title = "Toggle documentation panel";
+                }
+            }
+
+            window.addEventListener("resize", handleResize);
+            handleResize();
+        })();
+    </script>
+
+    <script>
+        (function () {
+            /* ── Buttery scramble text effect ── */
+            var GLYPHS = '!<>-_\\/[]{}=+*^?#@$%&';
+
+            function scramble(el, opts) {
+                opts = opts || {};
+                var duration = opts.duration || 1400;
+
+                if (!el._scrambleOrig) { el._scrambleOrig = el.textContent.trim(); }
+                var original = el._scrambleOrig;
+                if (el._scrambleRaf) { cancelAnimationFrame(el._scrambleRaf); }
+
+                var start = performance.now();
+                var len = original.length;
+
+                function tick(now) {
+                    var elapsed = now - start;
+                    var progress = Math.min(1, elapsed / duration);
+                    // Ease-out-expo: buttery smooth deceleration
+                    var eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+
+                    var out = '';
+                    for (var i = 0; i < len; i++) {
+                        var ch = original[i];
+                        if (ch === ' ' || ch === '\n' || ch === '\t') {
+                            out += ch;
+                            continue;
+                        }
+                        // Each char resolves across the full duration, staggered by position
+                        var charStart = (i / len) * 0.7;
+                        var charProgress = Math.max(0, Math.min(1, (eased - charStart) / (1 - charStart)));
+
+                        if (charProgress >= 0.85) {
+                            out += ch;
+                        } else if (charProgress > 0.5) {
+                            // Gentle settling: mostly real char with occasional flicker
+                            out += (Math.random() < 0.3 ? GLYPHS[Math.floor(Math.random() * GLYPHS.length)] : ch);
+                        } else {
+                            out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+                        }
+                    }
+                    el.textContent = out;
+
+                    if (progress < 1) {
+                        el._scrambleRaf = requestAnimationFrame(tick);
+                    } else {
+                        el.textContent = original;
+                        el._scrambleRaf = null;
+                    }
+                }
+                el._scrambleRaf = requestAnimationFrame(tick);
+            }
+
+            /* Hover re-trigger on any [data-scramble] element */
+            window.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('[data-scramble]').forEach(function (el) {
+                    el.addEventListener('mouseenter', function () {
+                        scramble(el, { duration: 800 });
+                    });
+                });
+            });
+
+            /* Expose globally so other scripts can call scramble(el) */
+            window.scrambleText = scramble;
+        })();
+    </script>
+
+    <script>
+        (function () {
+            var CONVERTER_URL = '/api/convert';
+            var GLYPHS = '!<>-_\\/[]{}=+*^?#@$%&ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var TOKEN_COLORS = {
+                keyword: '#b45309',
+                name: '#a16207',
+                value: '#d97706',
+                operator: '#be123c',
+                comment: '#6b7280',
+                plain: 'inherit'
+            };
+
+            function randomGlyph() {
+                return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+            }
+
+            function scrambleFrame(target, resolved) {
+                var out = '';
+                for (var i = 0; i < target.length; i++) {
+                    var ch = target[i];
+                    if (ch === ' ' || ch === '\n' || ch === '\t') { out += ch; }
+                    else if (i < resolved) { out += ch; }
+                    else { out += randomGlyph(); }
+                }
+                return out;
+            }
+
+            /** Fill `el` with plain scramble text (no child nodes). */
+            function setScramble(el, text) {
+                while (el.firstChild) { el.removeChild(el.firstChild); }
+                el.style.color = '#22c55e';
+                el.appendChild(document.createTextNode(text));
+            }
+
+            /** Fill `el` with colored token spans. */
+            function paintTokens(el, tokens) {
+                while (el.firstChild) { el.removeChild(el.firstChild); }
+                el.style.color = '';
+                tokens.forEach(function (tok) {
+                    var span = document.createElement('span');
+                    span.style.color = TOKEN_COLORS[tok.kind] || 'inherit';
+                    span.textContent = tok.text;
+                    el.appendChild(span);
+                });
+            }
+
+            /** Restore original syntax-highlighted HTML (stored as child nodes clone). */
+            function restoreOriginal(el, origNodes) {
+                while (el.firstChild) { el.removeChild(el.firstChild); }
+                el.style.color = '';
+                origNodes.forEach(function (n) { el.appendChild(n.cloneNode(true)); });
+            }
+
+            document.querySelectorAll('.code-widget').forEach(function (widget) {
+                var langEl = widget.querySelector('.code-header > span');
+                var codeEl = widget.querySelector('.code-body code');
+                var btn = widget.querySelector('.pseudo-toggle-btn');
+                var panel = widget.querySelector('.code-pseudo');
+
+                if (!btn || !codeEl) { return; }
+
+                /* Hide the old "below" panel — we no longer need it */
+                if (panel) { panel.style.display = 'none'; }
+
+                /* Cache original highlighted nodes & plain text */
+                var origNodes = Array.prototype.slice.call(codeEl.childNodes);
+                var origText = codeEl.innerText;
+                var timer = null;
+                var mode = 'code'; /* 'code' | 'pseudo' */
+                var cachedTokens = null;
+
+                function clearTimer() {
+                    if (timer) { clearInterval(timer); timer = null; }
+                }
+
+                function startNoise(ref) {
+                    clearTimer();
+                    setScramble(codeEl, scrambleFrame(ref, 0));
+                    timer = setInterval(function () {
+                        setScramble(codeEl, scrambleFrame(ref, 0));
+                    }, 1000 / 28);
+                }
+
+                function startResolve(toText, duration, onDone) {
+                    clearTimer();
+                    var frameMs = 1000 / 28;
+                    var totalFrames = Math.round(duration / frameMs);
+                    var frame = 0;
+                    timer = setInterval(function () {
+                        frame++;
+                        var resolved = Math.floor(toText.length * (frame / totalFrames));
+                        setScramble(codeEl, scrambleFrame(toText, resolved));
+                        if (frame >= totalFrames) {
+                            clearTimer();
+                            setTimeout(onDone, 80);
+                        }
+                    }, frameMs);
+                }
+
+                function convertToPS() {
+                    btn.disabled = true;
+                    var lang = langEl ? langEl.textContent.trim() : 'python';
+                    startNoise(origText);
+
+                    fetch(CONVERTER_URL, {
+                        method: 'POST',
+                        headers: { 'content-type': 'application/json' },
+                        body: JSON.stringify({ code: origText, language: lang })
+                    })
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
+                            if (!data.tokens || data.tokens.length === 0) {
+                                clearTimer();
+                                restoreOriginal(codeEl, origNodes);
+                                mode = 'code';
+                                btn.disabled = false;
+                                return;
+                            }
+                            cachedTokens = data.tokens;
+                            var pseudoPlain = cachedTokens.map(function (t) { return t.text; }).join('');
+                            startResolve(pseudoPlain, 500, function () {
+                                paintTokens(codeEl, cachedTokens);
+                                mode = 'pseudo';
+                                btn.title = 'Back to code';
+                                btn.classList.add('pseudo-btn-active');
+                                btn.disabled = false;
+                            });
+                        })
+                        .catch(function () {
+                            clearTimer();
+                            restoreOriginal(codeEl, origNodes);
+                            mode = 'code';
+                            btn.disabled = false;
+                        });
+                }
+
+                function convertToCode() {
+                    btn.disabled = true;
+                    var pseudoPlain = cachedTokens
+                        ? cachedTokens.map(function (t) { return t.text; }).join('') : '';
+                    startNoise(pseudoPlain || origText);
+                    setTimeout(function () {
+                        startResolve(origText, 400, function () {
+                            restoreOriginal(codeEl, origNodes);
+                            mode = 'code';
+                            btn.title = 'Toggle plain-English explanation';
+                            btn.classList.remove('pseudo-btn-active');
+                            btn.disabled = false;
+                        });
+                    }, 150);
+                }
+
+                btn.addEventListener('click', function () {
+                    if (mode === 'code') { convertToPS(); }
+                    else { convertToCode(); }
+                });
+            });
+        })();
+    </script>
+
+
+
+
+
+    <div class="bottom-nav">
+        <div class="bottom-nav-inner">
+            <div class="bottom-nav-section">
+                <a href="nextwork-directory.html" style="display:flex;align-items:center;text-decoration:none;">
+                <svg class="bottom-nav-logo" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_44_38)">
+                        <mask id="mask0_44_38" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
+                            width="256" height="256">
+                            <path d="M0 0H256V256H0V0Z" fill="white" />
+                        </mask>
+                        <g mask="url(#mask0_44_38)">
+                            <path
+                                d="M245.94 78.1744C239.495 62.9318 230.265 49.2442 218.511 37.4893C206.756 25.7346 193.068 16.5054 177.826 10.0596C162.042 3.3847 145.279 0 128 0C110.721 0 93.9584 3.3847 78.1744 10.0596C62.9318 16.5054 49.2442 25.7346 37.4893 37.4893C25.7346 49.2442 16.5054 62.9318 10.0596 78.1744C3.3847 93.9584 0 110.721 0 128C0 145.279 3.3847 162.042 10.0596 177.826C16.5054 193.068 25.7346 206.756 37.4893 218.511C49.2442 230.265 62.9318 239.495 78.1744 245.94C93.9584 252.615 110.721 256 128 256C145.279 256 162.042 252.615 177.826 245.94C193.068 239.495 206.756 230.265 218.511 218.511C230.265 206.756 239.495 193.068 245.94 177.826C252.615 162.042 256 145.279 256 128C256 110.721 252.615 93.9584 245.94 78.1744ZM174.478 17.9716C188.695 23.985 201.467 32.5955 212.434 43.5629C223.402 54.5302 232.012 67.3018 238.026 81.519C243.228 93.8208 246.287 106.767 247.152 120.1L231.176 110.143C195.817 88.1053 162.543 62.4138 132.275 33.7811L107.492 10.3373C114.215 9.17475 121.059 8.59059 127.997 8.59059C144.119 8.59059 159.756 11.7462 174.475 17.9716H174.478ZM81.5219 17.9716C86.6877 15.7867 91.968 13.9826 97.3402 12.5566L126.373 40.0208C156.953 68.9482 190.56 94.912 226.268 117.204C162.804 100.971 102.623 75.0246 47.2627 40.0266C57.3709 30.7343 68.8707 23.3235 81.5219 17.9716ZM17.9716 81.5219C23.5068 68.4355 31.2469 56.5776 40.9942 46.223C95.5533 80.952 154.754 106.988 217.171 123.705H8.6679C9.18048 109.101 12.3018 94.929 17.9744 81.5219H17.9716ZM17.9716 174.478C12.3018 161.071 9.17763 146.899 8.66506 132.295H217.371C154.892 148.998 95.6077 175.036 40.9942 209.78C31.2469 199.422 23.5068 187.567 17.9716 174.478ZM47.2656 215.976C102.649 180.987 162.869 155.043 226.354 138.827L225.277 139.503C190.331 161.415 157.391 186.868 127.373 215.155L97.3459 243.446C91.9709 242.02 86.6906 240.216 81.5219 238.028C68.8736 232.679 57.3738 225.268 47.2685 215.976H47.2656ZM238.028 174.478C232.015 188.695 223.404 201.467 212.437 212.434C201.47 223.402 188.698 232.012 174.481 238.026C159.762 244.251 144.124 247.406 128.003 247.406C121.073 247.406 114.235 246.822 107.517 245.663L133.266 221.4C162.878 193.498 195.373 168.39 229.844 146.776L247.155 135.924C246.287 149.247 243.231 162.182 238.031 174.475L238.028 174.478Z"
+                                fill="#1B1918" />
+                        </g>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_44_38">
+                            <rect width="256" height="256" fill="white" />
+                        </clipPath>
+                    </defs>
+                </svg>
+                </a>
+            </div>
+            <div class="bottom-nav-actions">
+                <button class="bottom-nav-btn" id="nav-ask" title="Open chat">
+                    <svg viewBox="0 0 20 21" fill="none" stroke="currentColor" stroke-width="1.67">
+                        <path
+                            d="M2.5 7.12c0-1.4 0-2.1.27-2.63a2.5 2.5 0 0 1 1.1-1.1C4.4 3.13 5.1 3.13 6.5 3.13h7c1.4 0 2.1 0 2.63.27a2.5 2.5 0 0 1 1.1 1.1c.27.53.27 1.23.27 2.63v4.5c0 1.4 0 2.1-.27 2.63a2.5 2.5 0 0 1-1.1 1.1c-.53.27-1.23.27-2.63.27H8.07c-.52 0-.78 0-1.03.05a2.5 2.5 0 0 0-.63.22c-.23.12-.43.28-.84.6l-1.99 1.59c-.34.28-.52.42-.66.42a.41.41 0 0 1-.33-.16c-.09-.12-.09-.35-.09-.8V7.12Z" />
+                    </svg>
+                    <span>Ask</span>
+                </button>
+                <button class="bottom-nav-btn" id="nav-projects" onclick="window.location.href='nextwork-directory.html'">
+                    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.67">
+                        <path
+                            d="m28 28-7.9999-8m2.6666-6.6667c0 5.1547-4.1787 9.3334-9.3334 9.3334C8.17868 22.6667 4 18.488 4 13.3333 4 8.17868 8.17868 4 13.3333 4c5.1547 0 9.3334 4.17868 9.3334 9.3333Z" />
+                    </svg>
+                    <span>Projects</span>
+                </button>
+                <button class="bottom-nav-btn" id="nav-docs" title="Open documentation">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M14 2.27V6.4c0 .56 0 .84.109 1.054a1 1 0 0 0 .437.437C14.76 8 15.04 8 15.6 8h4.13M20 9.988V17.2c0 1.68 0 2.52-.327 3.162a3 3 0 0 1-1.311 1.311C17.72 22 16.88 22 15.2 22H8.8c-1.68 0-2.52 0-3.162-.327a3 3 0 0 1-1.311-1.311C4 19.72 4 18.88 4 17.2V6.8c0-1.68 0-2.52.327-3.162a3 3 0 0 1 1.311-1.311C6.28 2 7.12 2 8.8 2h3.212c.733 0 1.1 0 1.446.083.306.073.598.195.867.36.303.185.562.444 1.08.963l3.19 3.188c.518.519.777.778.963 1.081a3 3 0 0 1 .36.867c.082.346.082.712.082 1.446Z" />
+                    </svg>
+                    <span>Documentation</span>
+                </button>
+            </div>
+            <div class="bottom-nav-section">
+                <div class="bottom-nav-avatar">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile">
+                    <div class="online-dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        (function () {
+            var leftPanel = document.getElementById('left-panel');
+            var docsPanel = document.getElementById('docs-panel');
+            var toggleLeft = document.getElementById('toggle-left');
+            var toggleRight = document.getElementById('toggle-right');
+
+            function openLeft() {
+                leftPanel.classList.remove('collapsed');
+                toggleLeft.classList.remove('collapsed');
+            }
+            function openRight() {
+                if (window.innerWidth > 1200) {
+                    docsPanel.classList.remove('collapsed');
+                    toggleRight.classList.remove('collapsed');
+                }
+            }
+            document.getElementById('nav-ask').addEventListener('click', openLeft);
+            document.getElementById('nav-docs').addEventListener('click', function () {
+                if (window.innerWidth > 1200) { openRight(); }
+            });
+            document.getElementById('nav-projects').addEventListener('click', function () {
+                // Placeholder
+            });
+        })();
+    </script>
+
+
+    <div id="hlPopup" class="hl-popup" aria-hidden="true">
+        <div class="hl-popup-arrow"></div>
+        <div class="hl-popup-inner">
+            <button class="hl-color active" data-color="#fef08a" style="background:#fef08a" title="Yellow"><span
+                    class="hl-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg></span></button>
+            <button class="hl-color" data-color="#bbf7d0" style="background:#bbf7d0" title="Green"></button>
+            <button class="hl-color" data-color="#c7d2fe" style="background:#c7d2fe" title="Blue"></button>
+            <button class="hl-color" data-color="#fecaca" style="background:#fecaca" title="Pink"></button>
+            <button class="hl-color" data-color="#fed7aa" style="background:#fed7aa" title="Orange"></button>
+            <div class="hl-divider"></div>
+            <button id="hlClearBtn" class="hl-action" title="Clear all highlights"><svg width="14" height="14"
+                    viewBox="0 0 16 16" fill="none">
+                    <path
+                        d="M2 4H14M5 4V2.5C5 2.22386 5.22386 2 5.5 2H10.5C10.7761 2 11 2.22386 11 2.5V4M12 4V13C12 13.5523 11.5523 14 11 14H5C4.44772 14 4 13.5523 4 13V4H12Z"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></button>
+        </div>
+    </div>
+    <div id="hlToast" class="hl-toast"><span class="hl-toast-msg"></span></div>
+
+
+    <script>
+        (function () {
+            var textContainer = document.querySelector('.editor');
+            var popup = document.getElementById('hlPopup');
+            var clearBtn = document.getElementById('hlClearBtn');
+            var colors = popup.querySelectorAll('.hl-color');
+            var toast = document.getElementById('hlToast');
+            var toastMsg = toast.querySelector('.hl-toast-msg');
+            var currentColor = '#fef08a';
+            var toastTimer = null, popupTimer = null, counter = 0;
+
+            function randomBetween(a, b) { return a + Math.random() * (b - a) }
+            function showToast(m) {
+                if (toastTimer) clearTimeout(toastTimer);
+                toastMsg.textContent = m; toast.classList.add('show');
+                toastTimer = setTimeout(function () { toast.classList.remove('show') }, 1800);
+            }
+
+            // Prevent mousedown from collapsing the text selection before click fires
+            popup.addEventListener('mousedown', function (e) { e.preventDefault(); });
+
+            colors.forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault(); e.stopPropagation();
+                    colors.forEach(function (b) { b.classList.remove('active') });
+                    btn.classList.add('active');
+                    currentColor = btn.getAttribute('data-color');
+                    applyHighlight();
+                });
+            });
+
+            clearBtn.addEventListener('click', function (e) {
+                e.preventDefault(); e.stopPropagation();
+                var hs = textContainer.querySelectorAll('.highlight');
+                if (!hs.length) { showToast('Nothing to clear.'); hidePopup(); return }
+                var count = hs.length;
+                hs.forEach(function (s) { s.style.opacity = '0'; s.style.transition = 'opacity .15s' });
+                setTimeout(function () {
+                    hs.forEach(function (s) {
+                        var p = s.parentNode; if (p) { while (s.firstChild) p.insertBefore(s.firstChild, s); p.removeChild(s); p.normalize() }
+                    });
+                }, 150);
+                showToast('Cleared ' + count + ' highlight' + (count > 1 ? 's' : '') + '.');
+                hidePopup();
+            });
+
+            document.addEventListener('selectionchange', function () {
+                var sel = window.getSelection();
+                if (!sel || sel.isCollapsed || !sel.toString().trim()) { hidePopup(); return }
+                if (!textContainer.contains(sel.anchorNode) || !textContainer.contains(sel.focusNode)) { hidePopup(); return }
+                clearTimeout(popupTimer);
+                popupTimer = setTimeout(function () { positionPopup(sel); showPopup() }, 120);
+            });
+
+            function positionPopup(sel) {
+                var range = sel.getRangeAt(0); var rect = range.getBoundingClientRect();
+                var pw = popup.offsetWidth || 180; var ph = popup.offsetHeight || 46;
+                var left = rect.left + rect.width / 2 - pw / 2;
+                if (left < 8) left = 8; if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+                var top = rect.top - ph - 8;
+                if (top < 8) { top = rect.bottom + 8; popup.querySelector('.hl-popup-arrow').style.cssText = 'top:-6px;bottom:auto;clip-path:polygon(0 100%,100% 100%,50% 0)' }
+                else { popup.querySelector('.hl-popup-arrow').style.cssText = 'top:auto;bottom:-6px;clip-path:polygon(0 0,100% 0,50% 100%)' }
+                popup.style.left = left + 'px'; popup.style.top = top + 'px';
+            }
+            function showPopup() { popup.classList.add('visible') }
+            function hidePopup() { clearTimeout(popupTimer); popup.classList.remove('visible') }
+
+            function applyHighlight() {
+                var sel = window.getSelection();
+                if (!sel || sel.isCollapsed || !sel.toString().trim()) return;
+                if (!textContainer.contains(sel.anchorNode) || !textContainer.contains(sel.focusNode)) return;
+                try { wrapSelection(sel, currentColor); showToast('Highlighted!'); hidePopup() } catch (e) { showToast('Try selecting less text.') }
+            }
+
+            function wrapSelection(sel, color) {
+                var range = sel.getRangeAt(0);
+                if (range.collapsed || !sel.toString().trim()) return;
+
+                var highlightId = 'hl-' + Date.now() + '-' + counter++;
+
+                // One span for the entire selection.
+                // box-decoration-break: clone (already in CSS) handles multi-line rendering —
+                // each line fragment gets its own decorated box from a single DOM element,
+                // which eliminates the multiple-rectangles-per-line problem.
+                var span = document.createElement('span');
+                span.className = 'highlight highlight-drawing';
+                span.setAttribute('data-color', color);
+                span.setAttribute('data-highlight-id', highlightId);
+                span.style.setProperty('--highlight-bg', color);
+                span.style.setProperty('--hl-shadow-l', '-2px');
+                span.style.setProperty('--hl-shadow-r', '2px');
+
+                var r1 = randomBetween(2, 5), r2 = randomBetween(2, 5);
+                span.style.borderRadius = r1 + 'px ' + r1 + 'px ' + r2 + 'px ' + r2 + 'px';
+                span.style.opacity = randomBetween(.91, .96);
+                span.style.transformOrigin = 'left center';
+
+                span.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var group = document.querySelectorAll('[data-highlight-id="' + highlightId + '"]');
+                    group.forEach(function (s) { s.style.opacity = '0'; s.style.transition = 'opacity .15s'; });
+                    setTimeout(function () {
+                        group.forEach(function (s) {
+                            var p = s.parentNode;
+                            if (p) {
+                                while (s.firstChild) p.insertBefore(s.firstChild, s);
+                                p.removeChild(s);
+                                p.normalize();
+                            }
+                        });
+                    }, 150);
+                    showToast('Removed highlight.');
+                });
+
+                try {
+                    range.surroundContents(span);
+                    sel.removeAllRanges();
+                    setTimeout(function () {
+                        span.classList.remove('highlight-drawing');
+                        span.classList.add('highlight-drawn');
+                    }, 450);
+                    return;
+                } catch (e) {
+                    // Selection crosses element boundaries — wrap text nodes
+                    var tw = document.createTreeWalker(range.commonAncestorContainer, 4, null, false);
+                    var nodes = [], n, sc = range.startContainer, so = range.startOffset;
+                    var ec = range.endContainer, eo = range.endOffset;
+                    while (n = tw.nextNode()) {
+                        if (n === sc || n === ec) { nodes.push(n); continue; }
+                        var pa = sc.compareDocumentPosition(n);
+                        var pb = n.compareDocumentPosition(ec);
+                        if ((pa & 2) && (pb & 2)) nodes.push(n);
+                    }
+                    if (nodes.length === 0) {
+                        var f = range.extractContents();
+                        span.appendChild(f);
+                        range.insertNode(span);
+                        sel.removeAllRanges();
+                        setTimeout(function () {
+                            span.classList.remove('highlight-drawing');
+                            span.classList.add('highlight-drawn');
+                        }, 450);
+                        return;
+                    }
+                    var first = true;
+                    for (var i = 0; i < nodes.length; i++) {
+                        var tn = nodes[i];
+                        var nr = document.createRange();
+                        var so2 = 0, eo2 = tn.textContent.length;
+                        if (tn === sc) so2 = so;
+                        if (tn === ec) eo2 = eo;
+                        nr.setStart(tn, so2);
+                        nr.setEnd(tn, eo2);
+                        var ns;
+                        if (first) { ns = span; first = false; }
+                        else {
+                            ns = document.createElement('span');
+                            ns.className = 'highlight highlight-drawing';
+                            ns.setAttribute('data-color', color);
+                            ns.setAttribute('data-highlight-id', highlightId);
+                            ns.style.setProperty('--highlight-bg', color);
+                            var r1b = randomBetween(2,5), r2b = randomBetween(2,5);
+                            ns.style.borderRadius = r1b+'px '+r1b+'px '+r2b+'px '+r2b+'px';
+                            ns.style.opacity = randomBetween(.91,.96);
+                            ns.style.transformOrigin = 'left center';
+                        }
+                        try { nr.surroundContents(ns); }
+                        catch(e2) { var f2 = nr.extractContents(); ns.appendChild(f2); nr.insertNode(ns); }
+                        if (ns !== span) {
+                            ns.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                var g = document.querySelectorAll('[data-highlight-id="'+highlightId+'"]');
+                                g.forEach(function(s) { s.style.opacity = '0'; s.style.transition = 'opacity .15s'; });
+                                setTimeout(function() {
+                                    g.forEach(function(s) { var p=s.parentNode; if(p) { while(s.firstChild) p.insertBefore(s.firstChild,s); p.removeChild(s); p.normalize(); } });
+                                }, 150);
+                                showToast('Removed highlight.');
+                            });
+                        }
+                    }
+                    sel.removeAllRanges();
+                    setTimeout(function () {
+                        document.querySelectorAll('[data-highlight-id="'+highlightId+'"]').forEach(function(s) {
+                            s.classList.remove('highlight-drawing');
+                            s.classList.add('highlight-drawn');
+                        });
+                    }, 450);
+                }
+            }
+
+            document.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key === 'h') { e.preventDefault(); applyHighlight() } });
+        })();
+    </script>
+
+
+</body>
+
+</html>
