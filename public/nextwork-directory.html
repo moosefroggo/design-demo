@@ -8,11 +8,41 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
+    @font-face {
+      font-family: 'FK Grotesk Neue';
+      src: url('/fonts/fk-grotesk-neue/woff2/FKGroteskNeue-Regular.woff2') format('woff2');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'FK Grotesk Neue';
+      src: url('/fonts/fk-grotesk-neue/woff2/FKGroteskNeue-Medium.woff2') format('woff2');
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'FK Grotesk Neue';
+      src: url('/fonts/fk-grotesk-neue/woff2/FKGroteskNeue-Bold.woff2') format('woff2');
+      font-weight: 600; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'FK Grotesk Neue';
+      src: url('/fonts/fk-grotesk-neue/woff2/FKGroteskNeue-Black.woff2') format('woff2');
+      font-weight: 800; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suisse Neue';
+      src: url('/fonts/suisse-neue/woff2/SuisseNeue-Regular-WebS.woff2') format('woff2');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Suisse Neue';
+      src: url('/fonts/suisse-neue/woff2/SuisseNeue-Medium-WebS.woff2') format('woff2');
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
     --font-ui:   "Inter", -apple-system, sans-serif;
-    --font-serif: "Source Serif 4", Georgia, serif;
+    --font-serif: "Suisse Neue", system-ui, sans-serif;
     --paper:       #F8F5F0;
     --white:       #ffffff;
     --leather:     #1B1918;
@@ -42,7 +72,7 @@
   }
 
   /* ── Panel ── */
-  .panel {
+  .panel { transition: max-height 0.35s ease;
     background: var(--white);
     border: 1px solid var(--border-primary);
     border-radius: 24px;
@@ -123,7 +153,7 @@
   .filter-pill:hover:not(.active) { background: var(--primary-hover); }
 
   /* ── Content area ── */
-  .content {
+  .content { transition: opacity 0.2s ease, transform 0.2s ease;
     overflow-y: auto;
     max-height: calc(84svh - 160px);
     padding-right: 8px;
@@ -201,7 +231,7 @@
     align-items: flex-start;
     gap: 6px;
   }
-  .series-card-title {
+  .series-card-title { font-family: var(--font-serif);
     font-size: 22px;
     font-weight: 600;
     color: #fff;
@@ -211,15 +241,14 @@
   .series-badge {
     display: inline-flex;
     align-items: center;
-    padding: 2px 8px;
+    padding: 2px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.12);
+    border: none;
+    background: #f4f1ec;
     font-size: 11px;
     font-weight: 500;
-    color: rgba(255,255,255,0.85);
+    color: #1b1918;
     letter-spacing: 0.02em;
-    backdrop-filter: blur(4px);
   }
 
   .bg-orchard    { background-image: url('/img/orchard.webp');          background-color: #3d2b1f; }
@@ -275,7 +304,7 @@
     border-radius: 6px;
     font-weight: 500;
   }
-  .project-arrow {
+  .project-arrow, .proj-arrow {
     color: var(--quaternary);
     flex-shrink: 0;
     opacity: 0;
@@ -283,7 +312,13 @@
   }
   .project-item:hover .project-arrow { opacity: 1; }
 
-</style>
+.series-proj-item:hover .proj-arrow { opacity: 1 !important; }
+  .back-to-explore:hover { background: var(--primary-hover, #f0ece6) !important; color: var(--primary, #1b1918) !important; }
+  </style>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeInFast { animation: fadeIn 0.2s ease; }
+  </style>
 </head>
 <body>
 
@@ -309,6 +344,7 @@
   </div>
 
   <div class="content">
+
 
     <div class="section-label">Series (4)</div>
     <div class="cards-grid">
@@ -343,22 +379,17 @@
         </div>
       </button>
 
+
+
       <button class="series-card">
         <div class="series-card-bg bg-serverless"></div>
         <div class="series-card-gradient"></div>
-
         <div class="series-card-body">
           <div class="series-card-title">AWS Lambda</div>
           <div class="series-badge">4 Projects</div>
         </div>
       </button>
-
     </div>
-
-    <div class="section-label">Projects (32)</div>
-    <div id="project-list"></div>
-
-  </div>
 </div>
 
 <script>
@@ -399,13 +430,18 @@
   ];
 
   var list = document.getElementById('project-list');
-
+  if (list) {
   projects.forEach(function (p) {
     var item     = document.createElement('a');
     item.href    = p.url;
     item.target  = '_blank';
     item.rel     = 'noopener noreferrer';
     item.className = 'project-item';
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    var r = this.getBoundingClientRect();
+    holeExit(p.title, '#1B1918', p.url, r.left + r.width/2, r.top + r.height/2);
+  });
 
     var left = document.createElement('div');
     left.className = 'project-left';
@@ -453,8 +489,10 @@
     item.appendChild(arrowSvg);
     list.appendChild(item);
   });
+  } // end if (list)
 
   // Tab toggle (visual)
+  function initDirectory() {
   document.querySelectorAll('.tab').forEach(function (tab) {
     tab.addEventListener('click', function () {
       document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
@@ -638,8 +676,31 @@
   document.querySelectorAll('.series-card').forEach(function(card, idx) {
     initCardShader(card, idx);
   });
+    document.querySelectorAll(".series-card").forEach(function(card) {
+    card.addEventListener("click", function() {
+      var r      = card.getBoundingClientRect();
+      var title  = card.querySelector(".series-card-title").textContent;
+      var bgCls  = Array.from(card.querySelector(".series-card-bg").classList)
+                       .find(function(c) { return CARD_ACCENT[c]; });
+      var accent = CARD_ACCENT[bgCls] || "#8B78D6";
+      var url    = CARD_URL[bgCls]    || "#";
+      showSeriesPanel(accent, SERIES_DATA[bgCls], url);
+    });
+  });
+  }
+  initDirectory();
 
   // ── Hole-eat exit transition ─────────────────────────────────────────────
+
+  // Reset hole wrapper on every page load
+  window.addEventListener("load", function() {
+    var w = document.getElementById("hole-wrapper");
+    var s = document.getElementById("hole-border-svg");
+    if (w) { w.style.visibility = "hidden"; w.style.clipPath = "circle(0%)"; }
+    if (s) s.style.opacity = "0";
+    document.body.style.pointerEvents = "auto";
+  });
+
   var CARD_ACCENT = {
     'bg-orchard':    '#C47A3A',
     'bg-cavern':     '#3A7AAA',
@@ -661,96 +722,196 @@
       level: 'Intermediate',
       stack: 'Python · Docker · K8s',
       time: '~6 hrs',
+      image: '/img/orchard.webp',
       projects: [
-        'Build a RAG API with FastAPI',
-        'Containerize a RAG API with Docker',
-        'Deploy a RAG API to Kubernetes',
+        { name: 'Build a RAG API with FastAPI', tag: 'RAG API (Part 1)', avatars: ['https://i.pravatar.cc/32?img=1','https://i.pravatar.cc/32?img=2','https://i.pravatar.cc/32?img=3'], completions: 290 },
+        { name: 'Containerize a RAG API with Docker', tag: 'RAG API (Part 2)', avatars: ['https://i.pravatar.cc/32?img=4','https://i.pravatar.cc/32?img=5'], completions: 180 },
+        { name: 'Deploy a RAG API to Kubernetes', tag: 'RAG API (Part 3)', avatars: ['https://i.pravatar.cc/32?img=6','https://i.pravatar.cc/32?img=7','https://i.pravatar.cc/32?img=8'], completions: 120 },
+      ],
+    },
+    'bg-cavern': {
+      title: 'Storage',
+      description: 'Master multi-cloud data transfer and storage solutions with AWS and GCP.',
+      level: 'Intermediate',
+      stack: 'AWS · GCP · S3',
+      time: '~3 hrs',
+      image: '/img/cavern.webp',
+      projects: [
+        { name: 'Multi-Cloud Data Transfer with AWS and GCP', tag: 'Storage', avatars: ['https://i.pravatar.cc/32?img=9','https://i.pravatar.cc/32?img=10'], completions: 85 },
+      ],
+    },
+    'bg-icelandic': {
+      title: 'Beginner AI Projects',
+      description: 'Get started with AI through hands-on projects — from chatbots to automation.',
+      level: 'Beginner',
+      stack: 'Claude · AWS · Python',
+      time: '~40 hrs',
+      image: '/img/icelandic-vibes.webp',
+      projects: [
+        { name: 'Set Up An AWS Account', tag: 'Account Management', avatars: ['https://i.pravatar.cc/32?img=11','https://i.pravatar.cc/32?img=12','https://i.pravatar.cc/32?img=13'], completions: 4620 },
+        { name: 'Host a Website on Amazon S3', tag: 'Cloud Beginner Challenge (Part 2)', avatars: ['https://i.pravatar.cc/32?img=14','https://i.pravatar.cc/32?img=15','https://i.pravatar.cc/32?img=16'], completions: 4180 },
+        { name: 'Cloud Security with AWS IAM', tag: 'Cloud Beginner Challenge (Part 3)', avatars: ['https://i.pravatar.cc/32?img=17','https://i.pravatar.cc/32?img=18'], completions: 1880 },
+        { name: 'Ship a Landing Page with v0 and Vercel', tag: 'FinOps x AI', avatars: ['https://i.pravatar.cc/32?img=19','https://i.pravatar.cc/32?img=20','https://i.pravatar.cc/32?img=1'], completions: 50 },
+        { name: 'Run Ollama On Your Own Machine', tag: 'RAG API (Part 1)', avatars: ['https://i.pravatar.cc/32?img=2','https://i.pravatar.cc/32?img=3'], completions: 50 },
+      ],
+    },
+    'bg-serverless': {
+      title: 'AWS Lambda',
+      description: 'Build serverless applications with AWS Lambda — from simple functions to full APIs.',
+      level: 'Intermediate',
+      stack: 'AWS · Lambda · API Gateway',
+      time: '~8 hrs',
+      image: '/img/serverless.webp',
+      projects: [
+        { name: 'Fetch Data with AWS Lambda', tag: 'Three-Tier (Part 3)', avatars: ['https://i.pravatar.cc/32?img=30','https://i.pravatar.cc/32?img=31'], completions: 140 },
+        { name: 'APIs with Lambda + API Gateway', tag: 'Three-Tier (Part 2)', avatars: ['https://i.pravatar.cc/32?img=32','https://i.pravatar.cc/32?img=33','https://i.pravatar.cc/32?img=34'], completions: 150 },
+        { name: 'Build a Three-Tier Web App', tag: 'Three-Tier (Part 4)', avatars: ['https://i.pravatar.cc/32?img=35','https://i.pravatar.cc/32?img=36'], completions: 140 },
+        { name: 'Website Delivery with CloudFront', tag: 'Three-Tier (Part 1)', avatars: ['https://i.pravatar.cc/32?img=37','https://i.pravatar.cc/32?img=38'], completions: 190 },
       ],
     },
   };
 
-  function showSeriesPanel(accent, data, onBack) {
-    var panel = document.createElement('div');
-    panel.style.cssText = [
-      'position:fixed;inset:0;z-index:200',
-      'display:flex;flex-direction:column;overflow-y:auto',
-      'opacity:0;transition:opacity 0.45s ease',
-      'pointer-events:none;font-family:var(--font-ui)',
-    ].join(';');
 
-    var nav = document.createElement('nav');
-    nav.style.cssText = [
-      'display:flex;align-items:center;justify-content:space-between',
-      'padding:22px 40px;flex-shrink:0',
-      'border-bottom:1px solid rgba(196,122,58,0.16)',
-      'background:rgba(6,7,8,0.55);backdrop-filter:blur(16px)',
-    ].join(';');
+  // Generate inline SVG avatar (no CORS needed)
+  var avatarColors = ['#965ECD','#308DED','#FA8A45','#12CCA6','#FEDD2D','#C47A3A','#3A7AAA','#4AAAA0','#7060C0','#E5534B','#2DA44E','#BF4B8A','#316DCA','#9A6700','#8250DF','#CF222E','#0A3069','#1A7F4B','#BC4C00','#6E7781'];
+  var avatarLetters = 'ABCDEFGHIJKLMNOPQRST';
+  function avatarSVG(idx) {
+    var color = avatarColors[idx % avatarColors.length];
+    var letter = avatarLetters[idx % avatarLetters.length];
+    var isLight = (color === '#FEDD2D');
+    return '<svg width="24" height="24" viewBox="0 0 24 24" style="flex-shrink:0;border-radius:50%;"><circle cx="12" cy="12" r="12" fill="' + color + '"/><text x="12" y="16" text-anchor="middle" fill="' + (isLight ? '#1B1918' : '#fff') + '" font-size="11" font-family="Inter,sans-serif">' + letter + '</text></svg>';
+  }
+  function showSeriesPanel(accent, data, seriesUrl) {
+    var content = document.querySelector('.content');
+    var panel = document.querySelector('.panel');
+    if (!content || !panel) return;
 
-    var backBtn = document.createElement('button');
-    backBtn.style.cssText = [
-      'display:inline-flex;align-items:center;gap:7px',
-      'background:none;border:none;cursor:pointer;padding:0',
-      'font-size:13px;color:rgba(248,245,240,0.42)',
-      'font-family:var(--font-ui);letter-spacing:0.01em;transition:color 0.18s',
-    ].join(';');
-    backBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 3L6 8l4 5"/></svg> Projects';
-    backBtn.onmouseenter = function(){ this.style.color='rgba(248,245,240,0.92)'; };
-    backBtn.onmouseleave = function(){ this.style.color='rgba(248,245,240,0.42)'; };
+    // Save original content
+    if (!content._originalHTML) {
+      content._originalHTML = content.innerHTML;
+    }
 
-    var brand = document.createElement('span');
-    brand.textContent = 'Nextwork';
-    brand.style.cssText = 'font-family:var(--font-serif);font-size:15px;font-weight:300;color:rgba(248,245,240,0.42);letter-spacing:0.03em;';
-    nav.appendChild(backBtn);
-    nav.appendChild(brand);
+    // Animate to course view
+    content.style.opacity = '0';
+    content.style.transform = 'translateY(8px)';
+    content.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
 
-    var hero = document.createElement('div');
-    hero.style.cssText = 'padding:72px 40px 52px;max-width:860px;flex-shrink:0;';
-    hero.innerHTML = [
-      '<div style="font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:' + accent + ';margin-bottom:22px;">Series · ' + data.projects.length + ' projects</div>',
-      '<h1 style="font-family:var(--font-serif);font-size:clamp(52px,8vw,96px);font-weight:300;line-height:0.95;letter-spacing:-0.03em;color:rgba(248,245,240,0.92);margin-bottom:28px;">' + data.title + '</h1>',
-      '<p style="font-size:17px;line-height:1.65;color:rgba(248,245,240,0.42);max-width:500px;">' + data.description + '</p>',
-    ].join('');
+    // Animate panel height
+    var currentHeight = panel.offsetHeight;
+    panel.style.transition = 'max-height 0.35s ease';
+    panel.style.maxHeight = '90svh';
 
-    var statsEl = document.createElement('div');
-    statsEl.style.cssText = [
-      'display:flex;gap:0;flex-shrink:0',
-      'border-top:1px solid rgba(196,122,58,0.16)',
-      'border-bottom:1px solid rgba(196,122,58,0.16)',
-      'background:rgba(6,7,8,0.52);backdrop-filter:blur(12px)',
-    ].join(';');
-    [
-      { value: data.projects.length, label: 'Projects' },
-      { value: data.level,           label: 'Level' },
-      { value: data.stack,           label: 'Stack' },
-      { value: data.time,            label: 'Est. time' },
-    ].forEach(function(s, i, arr) {
-      var sd = document.createElement('div');
-      sd.style.cssText = 'padding:20px 32px;' + (i < arr.length - 1 ? 'border-right:1px solid rgba(196,122,58,0.16);' : '');
-      sd.innerHTML = '<div style="font-size:22px;font-weight:500;color:rgba(248,245,240,0.92);letter-spacing:-0.01em;">' + s.value + '</div><div style="font-size:11px;color:rgba(248,245,240,0.42);margin-top:3px;letter-spacing:0.03em;">' + s.label + '</div>';
-      statsEl.appendChild(sd);
-    });
+    setTimeout(function() {
+      // Build the course view HTML
+      var courseHTML = '';
 
-    var projEl = document.createElement('div');
-    projEl.style.cssText = 'padding:48px 40px 64px;flex:1;';
-    var lh = '<div style="font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(248,245,240,0.42);margin-bottom:20px;">Projects</div><div style="display:flex;flex-direction:column;gap:10px;max-width:680px;">';
-    data.projects.forEach(function(p) {
-      lh += '<div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border:1px solid rgba(196,122,58,0.16);border-radius:10px;background:rgba(6,7,8,0.52);backdrop-filter:blur(14px);color:rgba(248,245,240,0.92);cursor:pointer;transition:background 0.18s,border-color 0.18s,transform 0.18s;" onmouseenter="this.style.background=\'rgba(196,122,58,0.09)\';this.style.borderColor=\'rgba(196,122,58,0.32)\';this.style.transform=\'translateX(5px)\'" onmouseleave="this.style.background=\'rgba(6,7,8,0.52)\';this.style.borderColor=\'rgba(196,122,58,0.16)\';this.style.transform=\'\'"><span style="font-size:14px;font-weight:500;">' + p + '</span><span style="color:rgba(248,245,240,0.42);font-size:16px;">→</span></div>';
-    });
-    lh += '</div>';
-    projEl.innerHTML = lh;
+      // Back button
+      courseHTML += '<button class="back-to-explore" style="display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;padding:6px 12px;font-size:13px;font-weight:600;color:var(--tertiary);border-radius:8px;font-family:var(--font-ui);transition:all 0.15s;margin-bottom:12px;">';
+      courseHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>';
+      courseHTML += 'Back</button>';
 
-    panel.appendChild(nav);
-    panel.appendChild(hero);
-    panel.appendChild(statsEl);
-    panel.appendChild(projEl);
-    document.body.appendChild(panel);
-    requestAnimationFrame(function() { panel.style.opacity = '1'; panel.style.pointerEvents = 'auto'; });
+      // Series hero card with image
+      courseHTML += '<div style="border:1px solid var(--border-primary);border-radius:16px;overflow:hidden;position:relative;background:var(--leather);min-height:200px;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 4px 12px rgba(0,0,0,0.08);">';
+      if (data.image) {
+        courseHTML += '<div style="position:absolute;inset:0;background-image:url(' + data.image + ');background-size:cover;background-position:center;z-index:0;"></div>';
+      }
+      courseHTML += '<div style="position:absolute;bottom:0;left:0;right:0;top:40%;background:linear-gradient(rgba(0,0,0,0) 0%, rgba(27,25,24,0.82) 76.71%);z-index:0;"></div>';
+      courseHTML += '<div style="position:relative;z-index:1;padding:24px;padding-top:80px;">';
+      courseHTML += '<h2 style="font-size:24px;font-weight:600;color:#fff;line-height:1.2;letter-spacing:-0.02em;margin-bottom:8px;">' + data.title + '</h2>';
+      courseHTML += '<div style="display:flex;align-items:center;gap:8px;">';
+      courseHTML += '<span style="display:inline-flex;align-items:center;padding:2px 10px;border-radius:8px;border:none;background:#f4f1ec;font-size:11px;font-weight:500;color:#1b1918;">' + data.projects.length + ' Projects</span>';
 
-    backBtn.addEventListener('click', function() {
-      panel.style.opacity = '0';
-      panel.style.pointerEvents = 'none';
-      setTimeout(function() { panel.remove(); onBack(); }, 450);
-    });
+      // Plus button (add to my projects)
+      courseHTML += '<button class="series-add-btn" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;border:none;background:#f4f1ec;color:#1b1918;cursor:pointer;flex-shrink:0;transition:all 0.15s;margin-left:4px;" onmouseenter="this.style.background=\'#e8e4db\'" onmouseleave="this.style.background=\'#f4f1ec\'" onclick="event.stopPropagation();var b=this;b.classList.toggle(\'added\');b.innerHTML=b.classList.contains(\'added\')?\'<svg width=20 height=20 viewBox=\\\'0 0 24 24\\\' fill=none stroke=currentColor stroke-width=2><path d=M5 13l4 4L19 7/></svg>\':\'<svg width=18 height=18 viewBox=\\\'0 0 24 24\\\' fill=none stroke=currentColor stroke-width=2><path d=M12 5v14M5 12h14/></svg>\';b.style.background=b.classList.contains(\'added\')?\'#12CCA6\':\'rgba(255,255,255,0.15)\'" title="Add series to my projects">';
+      courseHTML += '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>';
+      courseHTML += '</button>';
+
+      // Copy link button
+      courseHTML += '<button class="series-copy-btn" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;border:none;background:#f4f1ec;color:#1b1918;cursor:pointer;flex-shrink:0;transition:all 0.15s;margin-left:4px;" onmouseenter="this.style.background=\'#e8e4db\'" onmouseleave="this.style.background=\'#f4f1ec\'" onclick="event.stopPropagation();navigator.clipboard.writeText(window.location.href);var t=this;t.innerHTML=\'<svg width=18 height=18 viewBox=\\\'0 0 24 24\\\' fill=none stroke=currentColor stroke-width=2><path d=M20 6L9 17l-5-5/></svg>\';setTimeout(function(){t.innerHTML=\'<svg width=18 height=18 viewBox=\\\'0 0 24 24\\\' fill=none stroke=currentColor stroke-width=2><path d=M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71/><path d=M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71/></svg>\'},1500);" title="Copy course link">';
+      courseHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>';
+      courseHTML += '</button>';
+
+      courseHTML += '</div></div></div>';
+
+      // Description
+      courseHTML += '<p style="font-size:14px;line-height:1.5;color:var(--secondary);padding:8px 4px 0;">' + data.description + '</p>';
+
+      // Project list
+      courseHTML += '<div style="padding-top:16px;display:flex;flex-direction:column;gap:4px;">';
+      data.projects.forEach(function(p, idx) {
+        var projName = typeof p === 'string' ? p : p.name;
+        var projTag = p.tag || '';
+        var projAvatars = p.avatars || [];
+        var projCompletions = p.completions || 0;
+
+        courseHTML += '<div class="series-proj-item" data-title="' + projName.replace(/"/g, '&quot;') + '" data-accent="' + accent + '" data-url="' + seriesUrl + '" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:20px;cursor:pointer;transition:background 0.15s;gap:12px;">';
+        courseHTML += '<div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1;padding-left:12px;">';
+        courseHTML += '<span style="font-size:18px;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;">' + projName + '</span>';
+        courseHTML += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">';
+        courseHTML += '<div style="width:20px;height:20px;border-radius:50%;border:1px solid var(--border-secondary);background:var(--white);flex-shrink:0;"></div>';
+        if (projTag) {
+          courseHTML += '<span style="font-size:14px;color:var(--quaternary);white-space:nowrap;">' + projTag + '</span>';
+        }
+        if (projAvatars.length > 0) {
+          courseHTML += '<span style="color:var(--tertiary);font-size:14px;">•</span>';
+          courseHTML += '<div style="display:flex;align-items:center;gap:0;">';
+          courseHTML += '<div style="display:flex;">';
+          projAvatars.slice(0, 3).forEach(function(av, ai) {
+            courseHTML += avatarSVG(ai + idx * 3 + (projAvatars.length > 0 ? 0 : 0));
+          });
+          courseHTML += '</div>';
+          courseHTML += '<span style="font-size:14px;color:var(--tertiary);margin-left:8px;">' + (projCompletions >= 1000 ? Math.floor(projCompletions/100)/10 + 'K' : projCompletions) + '+ completed</span>';
+          courseHTML += '</div>';
+        }
+        courseHTML += '</div></div>';
+        courseHTML += '<button class="proj-arrow" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;border:none;background:transparent;cursor:pointer;flex-shrink:0;opacity:0;transition:opacity 0.15s,background 0.15s;">';
+        courseHTML += '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--tertiary-hover, #7a7370);"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>';
+        courseHTML += '</button>';
+        courseHTML += '</div>';
+      courseHTML += '</div>';
+
+      content.innerHTML = courseHTML;
+      content.style.opacity = '1';
+      content.style.transform = 'translateY(0)';
+
+      // Wire back button
+            });
+
+      // Wire back button
+      content.querySelector('.back-to-explore').addEventListener('click', function() {
+        content.style.opacity = '0';
+        content.style.transform = 'translateY(8px)';
+        panel.style.maxHeight = 'calc(84svh - 160px)';
+        setTimeout(function() {
+          if (content._originalHTML) {
+            content.innerHTML = content._originalHTML;
+            content.style.opacity = '1';
+            content.style.transform = 'translateY(0)';
+            initDirectory();
+          }
+        }, 200);
+      });
+
+      // Wire project items
+      content.querySelectorAll('.series-proj-item').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var r = this.getBoundingClientRect();
+          var title = this.getAttribute('data-title');
+          var accent = this.getAttribute('data-accent');
+          var url = this.getAttribute('data-url');
+          holeExit(title, accent, url, r.left + r.width/2, r.top + r.height/2);
+        });
+        item.addEventListener('mouseenter', function() {
+          this.style.background = 'var(--primary-hover, #f0ece6)';
+          this.querySelector('.proj-arrow').style.opacity = '1';
+        });
+        item.addEventListener('mouseleave', function() {
+          this.style.background = 'transparent';
+          this.querySelector('.proj-arrow').style.opacity = '0';
+        });
+      });
+    }, 150);
   }
 
   function drawPolarBlob(ctx, cx, cy, radii, scale) {
@@ -774,37 +935,59 @@
     ctx.closePath();
   }
 
+  // Preloaded content cache
+  var _recreatedHTML = null;
+  fetch('recreated-page.html')
+    .then(function(r) { return r.text(); })
+    .then(function(t) { _recreatedHTML = t; });
+
   function holeExit(title, accent, url, originX, originY, seriesData) {
     document.body.style.pointerEvents = 'none';
 
-    // ── Iframe and Wrapper ──
     var wrapper = document.getElementById('hole-wrapper');
-    var iframe = document.getElementById('preload-recreated-page');
-    if (!wrapper || !iframe) {
+    if (!wrapper) {
       wrapper = document.createElement('div');
       wrapper.id = 'hole-wrapper';
-      wrapper.style.cssText = 'position:fixed;inset:0;z-index:-100;pointer-events:none;opacity:0;filter:drop-shadow(0 0 20px rgba(0,0,0,0.12));';
-      iframe = document.createElement('iframe');
-      iframe.src = 'recreated-page.html';
-      iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
-      wrapper.appendChild(iframe);
+      wrapper.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;pointer-events:auto;background:#F8F5F0;overflow:hidden;';
+      wrapper.style.clipPath = 'circle(0%)';
+
+      // Close button
+      var closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '×';
+      closeBtn.style.cssText = 'position:fixed;top:20px;right:20px;z-index:10001;width:40px;height:40px;border-radius:50%;border:none;background:rgba(0,0,0,0.5);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+      closeBtn.onclick = function() {
+        wrapper.style.clipPath = 'circle(0%)';
+        document.body.style.pointerEvents = 'auto';
+        setTimeout(function(){ wrapper.style.visibility = 'hidden'; closeBtn.remove(); }, 400);
+      };
       document.body.appendChild(wrapper);
+      document.body.appendChild(closeBtn);
+
+      // Inject preloaded content
+      // Use iframe with srcdoc so scripts execute
+      var iframe = wrapper.querySelector('iframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+        wrapper.appendChild(iframe);
+      }
+      if (_recreatedHTML) {
+        iframe.srcdoc = _recreatedHTML;
+      } else {
+        iframe.src = 'recreated-page.html';
+      }
+    } else {
+      wrapper.style.visibility = 'visible';
+      wrapper.style.clipPath = 'circle(0%)';
     }
 
-    wrapper.style.zIndex = '101';
-    wrapper.style.opacity = '1';
-    wrapper.style.filter = 'drop-shadow(0 0 20px rgba(0,0,0,0.12))';
-    wrapper.style.clipPath = 'circle(0%)';
-    iframe.style.clipPath = 'none';
-
-    // ── SVG Border & Inner Shadow ──
+    // SVG border
     var svg = document.getElementById('hole-border-svg');
-    var poly = document.getElementById('hole-border-poly');
-    var shadowPoly = document.getElementById('hole-inner-shadow');
+    var poly, shadowPoly;
     if (!svg) {
       svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.id = 'hole-border-svg';
-      svg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity 0.2s ease;';
+      svg.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;pointer-events:none;opacity:1;';
       var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
       var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
       filter.id = 'inner-shadow-blur';
@@ -813,6 +996,7 @@
       filter.appendChild(feBlur);
       defs.appendChild(filter);
       svg.appendChild(defs);
+
       shadowPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       shadowPoly.id = 'hole-inner-shadow';
       shadowPoly.setAttribute('fill', 'none');
@@ -820,26 +1004,29 @@
       shadowPoly.setAttribute('stroke-width', '40');
       shadowPoly.setAttribute('filter', 'url(#inner-shadow-blur)');
       svg.appendChild(shadowPoly);
+
       poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       poly.id = 'hole-border-poly';
       poly.setAttribute('fill', 'none');
-      poly.setAttribute('stroke-width', '3');
+      poly.setAttribute('stroke-width', '2'); if (poly) poly.setAttribute('stroke', accent);
       svg.appendChild(poly);
-      wrapper.appendChild(svg);
-    }
-    svg.style.opacity = '1';
-    poly.setAttribute('stroke', accent);
 
-    // ── Pre-computed smooth ragged tear ──
+      document.body.appendChild(svg);
+    } else {
+      poly = document.getElementById('hole-border-poly');
+      shadowPoly = document.getElementById('hole-inner-shadow');
+      svg.style.opacity = '1';
+    }
+
+    // Pre-compute animation frames
+
+
     var pts = 40;
     var noise = [];
     for (var i = 0; i < pts; i++) noise.push(((Math.random() - 0.5) * 12 + (Math.random() - 0.5) * 12) / 2);
-    // Smooth noise
     var smNoise = [];
     for (var i = 0; i < pts; i++) {
-      var p = noise[(i - 1 + pts) % pts];
-      var c = noise[i];
-      var n = noise[(i + 1) % pts];
+      var p = noise[(i - 1 + pts) % pts], c = noise[i], n = noise[(i + 1) % pts];
       smNoise.push((p + c * 2 + n) / 4);
     }
 
@@ -847,16 +1034,12 @@
     var cx = originX, cy = originY;
     var cornerR = Math.sqrt(Math.pow(Math.max(cx, vw - cx), 2) + Math.pow(Math.max(cy, vh - cy), 2)) + 40;
 
-    // Pre-compute angles, cos/sin, and noise per point (never changes)
-    var angles = [], cosA = [], sinA = [];
+    var cosA = [], sinA = [];
     for (var i = 0; i < pts; i++) {
       var a = (i / pts) * Math.PI * 2;
-      angles.push(a);
-      cosA.push(Math.cos(a));
-      sinA.push(Math.sin(a));
+      cosA.push(Math.cos(a)); sinA.push(Math.sin(a));
     }
 
-    // Pre-compute staggered delays per point
     var del = [];
     for (var i = 0; i < pts; i++) {
       var d = Math.pow(Math.sin(i / pts * Math.PI * 5) * 0.5 + 0.5, 1.5) * 180;
@@ -864,61 +1047,43 @@
       del.push(d < 0 ? 0 : d);
     }
 
-    var DUR = 550;
-    var TOTAL_FRAMES = 38; // ~550ms at ~16ms per frame
-
-    // Pre-compute all frames: for each frame, store { css, svg }
-    // Each frame has pre-computed radii at that point in time
-    var frames = [];
-    var frameInterval = DUR / TOTAL_FRAMES;
+    var DUR = 550, TOTAL_FRAMES = 38;
+    var frames = [], frameInterval = DUR / TOTAL_FRAMES;
     for (var f = 0; f <= TOTAL_FRAMES; f++) {
-      var t = f * frameInterval; // elapsed time this frame represents
+      var t = f * frameInterval;
       var cssPts = [], svgPts = [];
       for (var i = 0; i < pts; i++) {
         var progress = Math.max(0, Math.min(1, (t - del[i]) / DUR));
         var eased = 1 - Math.pow(1 - progress, 3);
         var rad = eased * cornerR;
         if (rad > 15) rad += smNoise[i];
-        var px = cx + cosA[i] * rad;
-        var py = cy + sinA[i] * rad;
+        var px = cx + cosA[i] * rad, py = cy + sinA[i] * rad;
         cssPts.push(((px / vw) * 100).toFixed(2) + '% ' + ((py / vh) * 100).toFixed(2) + '%');
         svgPts.push(px.toFixed(1) + ',' + py.toFixed(1));
       }
-      frames.push({
-        css: 'polygon(' + cssPts.join(', ') + ')',
-        svg: svgPts.join(' ')
-      });
+      frames.push({ css: 'polygon(' + cssPts.join(', ') + ')', svg: svgPts.join(' ') });
     }
 
-    // Wait for iframe load before animating
     function startHoleAnimation() {
       var startTime = performance.now();
       function loop(now) {
         var elapsed = now - startTime;
         var idx = Math.min(TOTAL_FRAMES, Math.floor(elapsed / frameInterval));
         var shape = frames[idx];
+        if (!shape) return;
         wrapper.style.clipPath = shape.css;
-        poly.setAttribute('points', shape.svg);
-        shadowPoly.setAttribute('points', shape.svg);
+        if (poly) poly.setAttribute('points', shape.svg);
+        if (shadowPoly) shadowPoly.setAttribute('points', shape.svg);
         if (idx >= TOTAL_FRAMES) {
-          svg.style.opacity = '0';
           wrapper.style.clipPath = 'none';
-          window.location.href = iframe.src;
+          svg.style.opacity = '0';
           return;
         }
         requestAnimationFrame(loop);
       }
       requestAnimationFrame(loop);
     }
-
-    function waitAndAnimate() {
-      setTimeout(startHoleAnimation, 120);
-    }
-    if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
-      waitAndAnimate();
-    } else {
-      iframe.addEventListener('load', waitAndAnimate);
-    }
+    setTimeout(startHoleAnimation, 80);
   }
 
   document.querySelectorAll('.series-card').forEach(function(card) {
@@ -929,14 +1094,11 @@
                        .find(function(c) { return CARD_ACCENT[c]; });
       var accent = CARD_ACCENT[bgCls] || '#8B78D6';
       var url    = CARD_URL[bgCls]    || '#';
-      holeExit(title, accent, url, r.left + r.width / 2, r.top + r.height / 2, SERIES_DATA[bgCls]);
+      showSeriesPanel(accent, SERIES_DATA[bgCls], url);
     });
   });
 
 }());
 </script>
-<div id="hole-wrapper" style="position:fixed;inset:0;z-index:-100;pointer-events:none;opacity:0;">
-  <iframe id="preload-recreated-page" src="recreated-page.html" style="position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;" aria-hidden="true"></iframe>
-</div>
 </body>
 </html>
